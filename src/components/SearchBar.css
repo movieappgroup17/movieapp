@@ -1,0 +1,62 @@
+* {
+    box-sizing: border-box;
+}
+
+.searchbar{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px
+}
+
+.searchbar select,
+.searchbar input,
+.searchbar button {
+  height: 36px;
+  padding: 0 0.75rem;
+  border: 1px solid #cfd2d6;
+  border-radius: 8px;
+  background: #fff;
+  font: inherit;
+}
+
+.searchbar select:focus,
+.searchbar input:focus,
+.searchbar button:focus {
+  outline: none;
+  border-color: #7b8cff;
+  box-shadow: 0 0 0 3px rgba(123,140,255,.15);
+}
+
+.searchbar select {
+  flex: 0 1 160px;
+  min-width: 120px;
+}
+
+.searchbar input {
+  flex: 1 1 260px;
+  min-width: 180px;
+}
+
+.searchbar button {
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+
+
+@media (max-width: 640px) {
+  .searchbar { gap: 0.5rem; }
+
+  .searchbar select {
+    flex: 1 1 48%;
+    min-width: 0;
+  }
+
+  .searchbar input {
+    flex: 1 1 100%;
+  }
+
+  .searchbar button {
+    width: 100%;
+  }
+}
