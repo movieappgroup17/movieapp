@@ -98,11 +98,11 @@ export default function Showtimes() {
             ))
           }
         </select>
-        {selectedArea && <p>Valittu alueen ID: {selectedArea}</p>}{/*shows p -element if theatre is selected. For development purposes*/}
       </div>
 
       <div>
         <h2>Shows</h2>
+        <h3>{new Date().toLocaleDateString()}</h3>
         {shows.map((show, index) => (
           <div key={index}>
             <h3>
@@ -114,7 +114,7 @@ export default function Showtimes() {
             </p>
 
             <p>
-              Showtime: {show.dttmShowStart}
+              Showtime: {new Date(show.dttmShowStart).toLocaleTimeString('fi-FI', {hour: '2-digit', minute: '2-digit'})}
             </p>
 
             <p>
@@ -122,6 +122,9 @@ export default function Showtimes() {
             </p>
           </div>
         ))}
+        {shows.length === 0 && selectedArea && (
+        <p>No shows today.</p>
+        )}
       </div>
     </>
   )
