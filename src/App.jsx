@@ -10,9 +10,10 @@ import Groups from './pages/Groups'
 import NotFound from './pages/NotFound'
 import Profile from './pages/Profile'
 import Reviews from './pages/Reviews'
-import Search from './pages/Search'
+import { Search } from './pages/Search'
 import Showtimes from './pages/Showtimes'
 import ReactPaginate from 'react-paginate'
+
 
 function App() {
   const [movies, setMovies] = useState([])
