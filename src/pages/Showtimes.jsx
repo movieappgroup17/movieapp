@@ -38,6 +38,18 @@ export default function Showtimes() {
     return xmlToJson(xmlDoc)  // calls function to change XMLDoc to JSON
   },[xmlToJson])
 
+  const getShowtimes = (theatre) => {
+    fetch('https://www.finnkino.fi/xml/Schedule/?area=' + theatre)
+    .then(response => response.text())
+    .then(xml => {
+      const json = parseXML(xml)
+      console.log(json)
+    })
+    .catch(error => {
+      console.log(error)
+    })
+  }
+
   useEffect(()=>{
     fetch('https://www.finnkino.fi/xml/TheatreAreas/')
     .then(response => response.text())
@@ -59,6 +71,7 @@ export default function Showtimes() {
     
     setSelectedArea(selectedTheatre)
     console.log('Selected area id: ', selectedTheatre)
+    getShowtimes(selectedArea)
   }
   
   return (
