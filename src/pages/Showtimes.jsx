@@ -8,6 +8,8 @@ export default function Showtimes() {
   const [areas, setAreas] = useState([])
   const [selectedArea, setSelectedArea] = useState(null)
   const [shows, setShows] = useState([])
+  const [currentDate, setCurrentDate] = useState(new Date())
+
 
 
   // function goes through XML-data recursively and changes it to JSON-object
@@ -44,22 +46,34 @@ export default function Showtimes() {
 
 
   // function to fetch showtimes for selected theatre/area
-  const getShowtimes = (theatre) => {
+  const getShowtimes = (theatre, date) => {
 
-    fetch('https://www.finnkino.fi/xml/Schedule/?area=' + theatre)
+    console.log('getshowtimesissa ', date)  // debugging
+
+    fetch('https://www.finnkino.fi/xml/Schedule/?area=' + theatre + '&dt=' + date)
     .then(response => response.text())
     .then(xml => {
       const json = parseXML(xml)
       console.log(json)
 
     if (json.Schedule && json.Schedule.Shows && json.Schedule.Shows.Show) {
-      const shows = json.Schedule.Shows.Show
+      let shows = json.Schedule.Shows.Show;
+
+      // making sure shows is used as table instead of a single object (in case of only one show for the day)
+      if (!Array.isArray(shows)) {
+        shows = [shows];
+      }
+
+      // debugging
+      console.log("Show data: ", json.Schedule.Shows.Show)
+      console.log("Tyyppi: ", typeof json.Schedule.Shows.Show)
+
 
       // debugging
       for (let i = 0; i < shows.length; i++) {
         const show = shows[i]
-        console.log(show.Title, show.Genres)
-        console.log(show.Images.EventSmallImagePortrait)
+        //console.log(show.Title, show.Genres)
+        //console.log(show.Images.EventSmallImagePortrait)
       }
       setShows(shows)
     } else {
@@ -84,7 +98,6 @@ export default function Showtimes() {
     })
   }, [parseXML])
 
-
   // function to handle selection of theatre and to store selected ID for later usage
   const handleAreaChoice = (event) => {
 
@@ -92,8 +105,32 @@ export default function Showtimes() {
     
     setSelectedArea(selectedTheatre)
     console.log('Selected area id: ', selectedTheatre)  // debugging
-    getShowtimes(selectedTheatre) // calls function to fetch showtimes
+
+    getShowtimes(selectedTheatre, currentDate.toLocaleDateString('fi-FI')) // calls function to fetch showtimes
   }
+
+  // function to handle next -button
+  const handleNextDayButton = () => {
+
+    // set currentDate to nextday
+    const nextDay = new Date(currentDate)
+    nextDay.setDate(currentDate.getDate() + 1)
+    setCurrentDate(nextDay)
+
+    // if theatre/area has been already chosen and the date changes -> fetch new showtimes for new date
+    if (selectedArea) {
+    getShowtimes(selectedArea, formatDate(nextDay))
+  }
+  }
+
+  // function to check date is using right format for API
+  function formatDate(date) {
+  const d = date.getDate().toString().padStart(2, '0');
+  const m = (date.getMonth() + 1).toString().padStart(2, '0');
+  const y = date.getFullYear();
+  return `${d}.${m}.${y}`;
+}
+
   
   return (
     <>
@@ -113,8 +150,8 @@ export default function Showtimes() {
 
         <div id='secondColumn'>
           <h2>Shows</h2>
-          <h3 id='date'>{new Date().toLocaleDateString()}</h3>
-          
+          <h3 id='date'>{currentDate.toLocaleDateString()}</h3>
+          <button type='button' onClick={handleNextDayButton}>NEXT</button>
           <div>
             {shows.map((show, index) => (
               <div key={index}>
@@ -123,7 +160,7 @@ export default function Showtimes() {
                 <div id="showtimeContent">
                   <div id='movieImage'>
                     {show.Images.EventSmallImagePortrait && (
-                      <img src={show.Images.EventSmallImagePortrait} />
+                      <img src={show.Images.EventSmallImagePortrait} alt={`${show.Title} poster`} />
                     )}
                   </div>
 
@@ -144,7 +181,7 @@ export default function Showtimes() {
 
                   <div>
                     {show.RatingImageUrl && (
-                      <img src={show.RatingImageUrl} />
+                      <img src={show.RatingImageUrl} alt="Rating" />
                     )}
                   </div>
 
