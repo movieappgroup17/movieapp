@@ -1,7 +1,12 @@
 import React from 'react'
+import Header from '../components/Header'
 
 export default function Profile() {
   return (
-    <div>Profile</div>
+    
+    <>
+      <Header pageTitle={"Profile"}/>
+      <div>Profile</div>
+    </>
   )
 }

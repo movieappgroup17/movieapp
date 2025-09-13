@@ -21,13 +21,11 @@
 #secondColumn {
     width: 50%;
     padding-left: 4em;
-    
 }
-
     
 h2 {
     
-    margin-bottom: 1em;
+    margin-bottom: 0.5em;
 }
 
 #date {
@@ -35,7 +33,11 @@ h2 {
 }
 
 button {
-    margin-bottom: 2em;
+    margin-bottom: 2.5em;
+    margin-right: 1em;
+    border-radius: 5px;
+    background-color:cadetblue;
+    font-weight:500
 }
 
 #showtimeContent {

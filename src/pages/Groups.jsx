@@ -1,7 +1,11 @@
 import React from 'react'
+import Header from '../components/Header'
 
 export default function Groups() {
   return (
-    <div>Groups</div>
+    <>
+      <Header pageTitle={"Groups"}/>
+      <div>Groups</div>
+    </>
   )
 }

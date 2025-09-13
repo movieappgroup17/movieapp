@@ -106,6 +106,8 @@ export default function Showtimes() {
     setSelectedArea(selectedTheatre)
     console.log('Selected area id: ', selectedTheatre)  // debugging
 
+    setCurrentDate(new Date()) // makes sure new search is started on today's date
+
     getShowtimes(selectedTheatre, currentDate.toLocaleDateString('fi-FI')) // calls function to fetch showtimes
   }
 
@@ -119,8 +121,24 @@ export default function Showtimes() {
 
     // if theatre/area has been already chosen and the date changes -> fetch new showtimes for new date
     if (selectedArea) {
-    getShowtimes(selectedArea, formatDate(nextDay))
+      getShowtimes(selectedArea, formatDate(nextDay))
+    }
   }
+
+  const handlePreviosDayButton = () => {
+
+    if (currentDate > new Date() ) {
+      // set currentDate to yesterday
+      const yesterday = new Date(currentDate)
+      yesterday.setDate(currentDate.getDate() - 1)
+      setCurrentDate(yesterday)
+
+      // if theatre/area has been already chosen and the date changes -> fetch new showtimes for new date
+      if (selectedArea) {
+        getShowtimes(selectedArea, formatDate(yesterday))
+      }
+    }
+
   }
 
   // function to check date is using right format for API
@@ -151,6 +169,7 @@ export default function Showtimes() {
         <div id='secondColumn'>
           <h2>Shows</h2>
           <h3 id='date'>{currentDate.toLocaleDateString()}</h3>
+          <button type='button' onClick={handlePreviosDayButton}>PREVIOUS</button>
           <button type='button' onClick={handleNextDayButton}>NEXT</button>
           <div>
             {shows.map((show, index) => (
