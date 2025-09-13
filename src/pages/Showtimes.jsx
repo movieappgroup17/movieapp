@@ -24,12 +24,12 @@ export default function Showtimes() {
 
       if (hasSiblings) {
         if (!json[child.nodeName]) {
-          json[child.nodeName] = [xmlToJson(child)];
+          json[child.nodeName] = [xmlToJson(child)]
         } else {
-          json[child.nodeName].push(xmlToJson(child));
+          json[child.nodeName].push(xmlToJson(child))
         }
       } else {
-        json[child.nodeName] = xmlToJson(child);
+        json[child.nodeName] = xmlToJson(child)
       }
     }
     return json
@@ -42,6 +42,20 @@ export default function Showtimes() {
     return xmlToJson(xmlDoc)  // calls function to change XMLDoc to JSON
   },[xmlToJson])
 
+
+  // Hook that fetches all Finnkino theatres
+  useEffect(()=>{
+    fetch('https://www.finnkino.fi/xml/TheatreAreas/')
+    .then(response => response.text())
+    .then(xml => {
+      const json = parseXML(xml)
+      console.log(json.TheatreAreas.TheatreArea)
+      setAreas(json.TheatreAreas.TheatreArea)
+    })
+    .catch(error => {
+      console.log(error)
+    })
+  }, [parseXML])
 
   // function to fetch showtimes for selected theatre/area
   const getShowtimes = (theatre, date) => {
@@ -59,19 +73,12 @@ export default function Showtimes() {
 
       // making sure shows is used as table instead of a single object (in case of only one show for the day)
       if (!Array.isArray(shows)) {
-        shows = [shows];
+        shows = [shows]
       }
-
-      // debugging
-      console.log("Show data: ", json.Schedule.Shows.Show)
-      console.log("Tyyppi: ", typeof json.Schedule.Shows.Show)
-
 
       // debugging
       for (let i = 0; i < shows.length; i++) {
         const show = shows[i]
-        //console.log(show.Title, show.Genres)
-        //console.log(show.Images.EventSmallImagePortrait)
       }
       setShows(shows)
     } else {
@@ -82,19 +89,6 @@ export default function Showtimes() {
       console.log(error)
     })
   }
-
-  useEffect(()=>{
-    fetch('https://www.finnkino.fi/xml/TheatreAreas/')
-    .then(response => response.text())
-    .then(xml => {
-      const json = parseXML(xml)
-      console.log(json.TheatreAreas.TheatreArea)
-      setAreas(json.TheatreAreas.TheatreArea)
-    })
-    .catch(error => {
-      console.log(error)
-    })
-  }, [parseXML])
 
   // function to handle selection of theatre and to store selected ID for later usage
   const handleAreaChoice = (event) => {
@@ -138,12 +132,12 @@ export default function Showtimes() {
     }
   }
 
-  // function to check date is using right format for API
+  // function to check right format for date
   function formatDate(date) {
-  const d = date.getDate().toString().padStart(2, '0');
-  const m = (date.getMonth() + 1).toString().padStart(2, '0');
-  const y = date.getFullYear();
-  return `${d}.${m}.${y}`;
+  const d = date.getDate().toString().padStart(2, '0')
+  const m = (date.getMonth() + 1).toString().padStart(2, '0')
+  const y = date.getFullYear()
+  return `${d}.${m}.${y}`
 }
 
   
