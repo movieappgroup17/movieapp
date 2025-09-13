@@ -4,7 +4,7 @@ import Header from '../components/Header'
 export default function Home() {
   return (
     <>
-      <Header pageTitle={"Groups"}/>
+      <Header pageTitle={"Home"}/>
       <div>Home</div>
     </>
   )

@@ -10,8 +10,6 @@ export default function Showtimes() {
   const [shows, setShows] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date())
 
-
-
   // function goes through XML-data recursively and changes it to JSON-object
   const xmlToJson = useCallback((node) => {
 
@@ -138,7 +136,6 @@ export default function Showtimes() {
         getShowtimes(selectedArea, formatDate(yesterday))
       }
     }
-
   }
 
   // function to check date is using right format for API
