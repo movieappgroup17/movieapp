@@ -60,3 +60,26 @@
     width: 100%;
   }
 }
+
+.pagination {
+  display: flex;
+  flex-direction: row;
+  list-style-type: none;
+  gap: 0.5rem;
+  padding: 0;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.pagination li{
+  width: 2em;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #cfd2d6;
+  border-radius: 6px;
+}
+
+.pagination li.selected{
+  background-color: #7b8cff;
+  color: white;
+}

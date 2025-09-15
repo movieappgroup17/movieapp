@@ -36,7 +36,7 @@ function SearchBar({ defaultValues, onSearch }) {
 
     function submit(e) {
         e.preventDefault();
-        onSearch(form); // Samun haku-funktio saa koko objektiin
+        onSearch(form, 1); // Samun haku-funktio saa koko objektiin //Uusi haku resettaa haun sivuston 1
     }
 
     return (

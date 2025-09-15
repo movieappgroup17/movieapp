@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import './App.css'
+import { useEffect, useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
@@ -12,6 +11,7 @@ import Profile from './pages/Profile'
 import Reviews from './pages/Reviews'
 import { Search } from './pages/Search'
 import Showtimes from './pages/Showtimes'
+import ReactPaginate from 'react-paginate'
 
 
 function App() {
@@ -35,5 +35,6 @@ function App() {
     </>
   )
 }
+
 
 export default App
