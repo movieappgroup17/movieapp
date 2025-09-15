@@ -1,11 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import './css/Showtimes.css'
+import '../components/Header'
+import Header from '../components/Header'
 
 export default function Showtimes() {
 
   const [areas, setAreas] = useState([])
   const [selectedArea, setSelectedArea] = useState(null)
   const [shows, setShows] = useState([])
-
+  const [currentDate, setCurrentDate] = useState(new Date())
 
   // function goes through XML-data recursively and changes it to JSON-object
   const xmlToJson = useCallback((node) => {
@@ -21,12 +24,12 @@ export default function Showtimes() {
 
       if (hasSiblings) {
         if (!json[child.nodeName]) {
-          json[child.nodeName] = [xmlToJson(child)];
+          json[child.nodeName] = [xmlToJson(child)]
         } else {
-          json[child.nodeName].push(xmlToJson(child));
+          json[child.nodeName].push(xmlToJson(child))
         }
       } else {
-        json[child.nodeName] = xmlToJson(child);
+        json[child.nodeName] = xmlToJson(child)
       }
     }
     return json
@@ -39,30 +42,8 @@ export default function Showtimes() {
     return xmlToJson(xmlDoc)  // calls function to change XMLDoc to JSON
   },[xmlToJson])
 
-  const getShowtimes = (theatre) => {
-    fetch('https://www.finnkino.fi/xml/Schedule/?area=' + theatre)
-    .then(response => response.text())
-    .then(xml => {
-      const json = parseXML(xml)
-      console.log(json)
 
-    if (json.Schedule && json.Schedule.Shows && json.Schedule.Shows.Show) {
-      const shows = json.Schedule.Shows.Show
-
-      for (let i = 0; i < shows.length; i++) {
-        const show = shows[i]
-        console.log(show.Title, show.Genres)
-      }
-      setShows(shows)
-    } else {
-      setShows([])
-    }
-    })
-    .catch(error => {
-      console.log(error)
-    })
-  }
-
+  // Hook that fetches all Finnkino theatres
   useEffect(()=>{
     fetch('https://www.finnkino.fi/xml/TheatreAreas/')
     .then(response => response.text())
@@ -76,6 +57,38 @@ export default function Showtimes() {
     })
   }, [parseXML])
 
+  // function to fetch showtimes for selected theatre/area
+  const getShowtimes = (theatre, date) => {
+
+    console.log('getshowtimesissa ', date)  // debugging
+
+    fetch('https://www.finnkino.fi/xml/Schedule/?area=' + theatre + '&dt=' + date)
+    .then(response => response.text())
+    .then(xml => {
+      const json = parseXML(xml)
+      console.log(json)
+
+    if (json.Schedule && json.Schedule.Shows && json.Schedule.Shows.Show) {
+      let shows = json.Schedule.Shows.Show;
+
+      // making sure shows is used as table instead of a single object (in case of only one show for the day)
+      if (!Array.isArray(shows)) {
+        shows = [shows]
+      }
+
+      // debugging
+      for (let i = 0; i < shows.length; i++) {
+        const show = shows[i]
+      }
+      setShows(shows)
+    } else {
+      setShows([])
+    }
+    })
+    .catch(error => {
+      console.log(error)
+    })
+  }
 
   // function to handle selection of theatre and to store selected ID for later usage
   const handleAreaChoice = (event) => {
@@ -83,48 +96,115 @@ export default function Showtimes() {
     const selectedTheatre = event.target.value
     
     setSelectedArea(selectedTheatre)
-    console.log('Selected area id: ', selectedTheatre)
-    getShowtimes(selectedTheatre)
+    console.log('Selected area id: ', selectedTheatre)  // debugging
+
+    setCurrentDate(new Date()) // makes sure new search is started on today's date
+
+    getShowtimes(selectedTheatre, currentDate.toLocaleDateString('fi-FI')) // calls function to fetch showtimes
   }
+
+  // function to handle next -button
+  const handleNextDayButton = () => {
+
+    // set currentDate to nextday
+    const nextDay = new Date(currentDate)
+    nextDay.setDate(currentDate.getDate() + 1)
+    setCurrentDate(nextDay)
+
+    // if theatre/area has been already chosen and the date changes -> fetch new showtimes for new date
+    if (selectedArea) {
+      getShowtimes(selectedArea, formatDate(nextDay))
+    }
+  }
+
+  const handlePreviosDayButton = () => {
+
+    if (currentDate > new Date() ) {
+      // set currentDate to yesterday
+      const yesterday = new Date(currentDate)
+      yesterday.setDate(currentDate.getDate() - 1)
+      setCurrentDate(yesterday)
+
+      // if theatre/area has been already chosen and the date changes -> fetch new showtimes for new date
+      if (selectedArea) {
+        getShowtimes(selectedArea, formatDate(yesterday))
+      }
+    }
+  }
+
+  // function to check right format for date
+  function formatDate(date) {
+  const d = date.getDate().toString().padStart(2, '0')
+  const m = (date.getMonth() + 1).toString().padStart(2, '0')
+  const y = date.getFullYear()
+  return `${d}.${m}.${y}`
+}
+
   
   return (
     <>
-      <div>
-        <h1>Finnkino Showtimes</h1>
-        <select onChange={handleAreaChoice}>
-          {
-            areas.map(area => (
-              <option key={area.ID} value={area.ID}>{area.Name}</option>
-            ))
-          }
-        </select>
-      </div>
+    <Header pageTitle={"Finnkino Showtimes"}/>
+      
+      <div id="content">
 
-      <div>
-        <h2>Shows</h2>
-        <h3>{new Date().toLocaleDateString()}</h3>
-        {shows.map((show, index) => (
-          <div key={index}>
-            <h3>
-              {show.Title}
-            </h3>
+        <div id='firstColumn'>
+          <select onChange={handleAreaChoice}>
+            {
+              areas.map(area => (
+                <option key={area.ID} value={area.ID}>{area.Name}</option>
+              ))
+            }
+          </select>
+        </div>
 
-            <p>
-              Genre: {show.Genres}
-            </p>
+        <div id='secondColumn'>
+          <h2>Shows</h2>
+          <h3 id='date'>{currentDate.toLocaleDateString()}</h3>
+          <button type='button' onClick={handlePreviosDayButton}>PREVIOUS</button>
+          <button type='button' onClick={handleNextDayButton}>NEXT</button>
+          <div>
+            {shows.map((show, index) => (
+              <div key={index}>
+                <h3 id='movieName'>{show.Title}</h3>
 
-            <p>
-              Showtime: {new Date(show.dttmShowStart).toLocaleTimeString('fi-FI', {hour: '2-digit', minute: '2-digit'})}
-            </p>
+                <div id="showtimeContent">
+                  <div id='movieImage'>
+                    {show.Images.EventSmallImagePortrait && (
+                      <img src={show.Images.EventSmallImagePortrait} alt={`${show.Title} poster`} />
+                    )}
+                  </div>
 
-            <p>
-              Auditorium: {show.TheatreAuditorium}
-            </p>
-          </div>
-        ))}
+                  <div id='movieText'>
+                    <p>
+                      Showtime: {new Date(show.dttmShowStart).toLocaleTimeString('fi-FI', {hour: '2-digit', minute: '2-digit'})}
+                    </p>
+                    <p>
+                      Auditorium: {show.TheatreAuditorium}
+                    </p>
+                    <p>
+                      Language: {show.SpokenLanguage.Name}
+                    </p>
+                    <p>
+                      Genre: {show.Genres}
+                    </p>
+                  </div>
+
+                  <div>
+                    {show.RatingImageUrl && (
+                      <img src={show.RatingImageUrl} alt="Rating" />
+                    )}
+                  </div>
+
+                </div> 
+
+              </div>
+            ))}
+        </div>
+        
         {shows.length === 0 && selectedArea && (
-        <p>No shows today.</p>
+          <p id="noShows">No shows today</p>
         )}
+        </div>
       </div>
     </>
   )

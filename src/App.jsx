@@ -19,7 +19,6 @@ function App() {
   return (
     <>
     <Navbar/>
-    <Header/>
     <div id="container">
       <Routes>
         <Route path="/" exact element={<Home/>}/>

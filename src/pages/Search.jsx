@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { SearchBar } from '../components/SearchBar.jsx'
 import { discoverMovies, searchMoviesByText } from '../components/SearchFunctions'
+import Header from '../components/Header'
 import ReactPaginate from 'react-paginate'
+
 
 function Search() {
   const [results, setResults] = useState([])
@@ -59,6 +61,8 @@ function Search() {
   }
 
   return (
+    <>
+    <Header pageTitle={"Search"}/>
     <div className="p-4">
       <SearchBar defaultValues={defaultFilters} onSearch={runSearch} />
 
@@ -96,6 +100,7 @@ function Search() {
         />
       )}
     </div>
+    </>
   );
 }
 
