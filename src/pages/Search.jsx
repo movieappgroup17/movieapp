@@ -1,9 +1,7 @@
 import { useState } from 'react'
 import { SearchBar } from '../components/SearchBar.jsx'
 import { discoverMovies, searchMoviesByText } from '../components/SearchFunctions'
-import Header from '../components/Header'
 import ReactPaginate from 'react-paginate'
-
 
 function Search() {
   const [results, setResults] = useState([])
@@ -28,27 +26,24 @@ function Search() {
 
     try {
       let data;
-      const hasFilters = newFilters.genres.length || newFilters.year || newFilters.sort !== "popularity.desc"
-      if (newFilters.query && hasFilters) {
-        // Jos on tekstihaku + suodattimia, voi käyttää discoveria ilman querya
-        // yhdistäminen: hae searchilla ja suodata clientissä 
-        // Tässä valitaan discover, koska TMDB ei yhdistä suoraan query + with_genres
-        data = await discoverMovies({
-          genres: newFilters.genres,
-          year: newFilters.year,
-          sort: newFilters.sort,
-          page: newPage
-        })
-      } else if (newFilters.query) {
+      if (newFilters.query){
         data = await searchMoviesByText({ query: newFilters.query, page: newPage})
-      } else {
-        data = await discoverMovies({
-          genres: newFilters.genres,
-          year: newFilters.year,
-          sort: newFilters.sort,
-          page: newPage
-        }
-        );
+        let filtered = data.results ?? []
+
+      if (newFilters.year){
+        filtered = filtered.filter(m=> m.release_date?.startsWith(newFilters.year))
+      }
+      if (newFilters.genres.length) {
+        filtered = filtered.filter(m=> m.genres_ids?.some (g=> newFilters.genres.includes(g)))
+      }
+      if (newFilters.sort === "release_date.desc"){
+        filtered = [...filtered].sort((a, b) => new Date(b.release_date) - new Date(a.release_date))
+      }
+      if (newFilters.sort === "vote_average.desc"){
+        filtered = [...filtered].sort((a, b) => b.vote_average - a.vote_average)
+       }
+
+       data.results = filtered
       }
       setResults(data?.results ?? [])
       setPageCount(data?.total_pages ?? 0)
@@ -61,8 +56,6 @@ function Search() {
   }
 
   return (
-    <>
-    <Header pageTitle={"Search"}/>
     <div className="p-4">
       <SearchBar defaultValues={defaultFilters} onSearch={runSearch} />
 
@@ -78,6 +71,7 @@ function Search() {
           alt={m.title}
         />
       )} 
+            {m.overview && <p>{m.overview}</p>}
             <div className="font-semibold">{m.title}</div>
             <div>{m.release_date}</div>
           </div>
@@ -100,7 +94,6 @@ function Search() {
         />
       )}
     </div>
-    </>
   );
 }
 
