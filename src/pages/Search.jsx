@@ -3,6 +3,7 @@ import { SearchBar } from '../components/SearchBar.jsx'
 import { discoverMovies, searchMoviesByText } from '../components/SearchFunctions'
 import ReactPaginate from 'react-paginate'
 import Header from '../components/Header'
+import './css/search.css'
 
 function Search() {
   const [results, setResults] = useState([])
@@ -59,24 +60,25 @@ function Search() {
   return (
     <>
     <Header pageTitle={"Search"}/>
-    <div className="p-4">
+    <div id="searchbar-container">
       <SearchBar defaultValues={defaultFilters} onSearch={runSearch} />
 
       {loading && <p>Loading…</p>}
       {err && <p>Failed: {String(err.message || err)}</p>}
 
-      <div className="grid gap-3 mt-4">
+      <div id="movieContainer">
         {results.map((m) => (
-          <div key={m.id} className="border p-3 rounded">
+          <div key={m.id} id="movieCard">
           {m.poster_path && (
         <img
           src={`https://image.tmdb.org/t/p/w200${m.poster_path}`}
           alt={m.title}
         />
       )} 
-            {m.overview && <p>{m.overview}</p>}
-            <div className="font-semibold">{m.title}</div>
+           
+            <div id="movieTitle">{m.title}</div>
             <div>{m.release_date}</div>
+            <div id="movieDescription"> {m.overview && <p>{m.overview}</p>}</div>
           </div>
         ))}
       </div>

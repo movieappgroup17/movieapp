@@ -1,0 +1,67 @@
+#movieContainer {
+    padding-left: 30px;
+   display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+#movieCard {
+  flex: 1 1 calc(33.333% - 1rem); /* 3 per rivi */
+  box-sizing: border-box;
+}
+
+ #movieTitle{
+    font-weight: 500;
+    font-size: 15px;
+ }
+
+ #movieDescription{
+  font-size: 13px;
+  text-align: justify;
+  padding-right: 30px;
+ }
+
+.pagination {
+  display: flex;
+  flex-direction: row;
+  list-style-type: none;
+  gap: 0.5rem;
+  padding: 0;
+  justify-content: center;
+  margin-top: 1rem;
+  padding-bottom: 30px;
+}
+
+.pagination li{
+  width: 2em;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #cfd2d6;
+  border-radius: 6px;
+}
+
+.pagination li.selected,
+.pagination select:focus,
+.pagination button:focus{
+  outline: none;
+  box-shadow: 0 0 0 3px #e6e6e6;
+}
+
+.pagination select,
+.pagination input,
+.pagination button {
+  height: 25px;
+  padding: 0 0.75rem;
+  border: 1px solid #dedfe0;
+  border-radius: 8px;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+}
+
+.pagination a{
+    text-decoration: none;
+    font-size: 13px;
+    color: #000;
+ }
+
