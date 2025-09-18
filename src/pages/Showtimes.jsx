@@ -160,8 +160,8 @@ export default function Showtimes() {
         <div id='secondColumn'>
           <h2>Shows</h2>
           <h3 id='date'>{currentDate.toLocaleDateString()}</h3>
-          <button type='button' onClick={handlePreviosDayButton}>PREVIOUS</button>
-          <button type='button' onClick={handleNextDayButton}>NEXT</button>
+          <button type='button' onClick={handlePreviosDayButton}>Previous</button>
+          <button type='button' onClick={handleNextDayButton}>Next</button>
           <div>
             {shows.map((show, index) => (
               <div key={index}>
