@@ -12,6 +12,7 @@ import Reviews from './pages/Reviews'
 import { Search } from './pages/Search'
 import Showtimes from './pages/Showtimes'
 import ReactPaginate from 'react-paginate'
+import Authentication from './pages/Authentication'
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
         <Route path="/reviews" exact element={<Reviews/>}/>
         <Route path="/search" exact element={<Search/>}/>
         <Route path="/showtimes" exact element={<Showtimes/>}/>
+        <Route path="/authentication" exact element={<Authentication/>}/>
       </Routes>
     </div>
     <Footer/>
