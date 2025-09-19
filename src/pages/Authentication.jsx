@@ -1,10 +1,10 @@
 import { Link, useNavigate } from "react-router-dom"
 import { useUser } from "../context/useUser"
-import React from 'react'
+import React, { useState } from 'react'
 import Header from '../components/Header'
 
 export const AuthenticationMode = Object.freeze({
-    SignIn: 'Login',
+    SignIn: 'SignIn',
     SignUp: 'SignUp'
 })
 
@@ -18,7 +18,7 @@ export default function Authentication({ authenticationMode }) {
         const signFunction = authenticationMode === AuthenticationMode.SignUp ?
             signUp : signIn
         signFunction().then(response => {
-            navigate(authenticationMode === Authentication.SignUp ? '/signin' : '/')
+            navigate(authenticationMode === AuthenticationMode.SignUp ? '/signin' : '/')
         })
             .catch(error => {
                 alert(error)
@@ -26,7 +26,8 @@ export default function Authentication({ authenticationMode }) {
     }
 
     return (
-        
+        <>
+        <Header pageTitle={"Ready to make a scene?"}/>
         <div>
             <h3>{authenticationMode === AuthenticationMode.SignIn ? 'Sign in' : 'Sign up'}</h3>
             <form onSubmit={handleSubmit}>
@@ -42,11 +43,24 @@ export default function Authentication({ authenticationMode }) {
                     type='password' value={user.password}
                     onChange={e => setUser({ ...user, password: e.target.value })}/>
 
+                // nickname -input is shown only in sign up
+                { authenticationMode === AuthenticationMode.SignUp && (
+                    <>
+                        <label>Nickname</label>
+                        <input
+                            placeholder='Nickname'
+                            value={user.nickname}
+                            onChange={e => setUser({ ...user, nickname: e.target.value })}
+                        />
+                    </>
+                )}
+
                 <button type='submit'>{authenticationMode === AuthenticationMode.SignIn ? 'Login' : 'Submit'}</button>
                 <Link to={authenticationMode === AuthenticationMode.SignIn ? '/signup' : '/signin'}>
                     {authenticationMode === AuthenticationMode.SignIn ? 'No account? Sign up' : 'Already signed up? Sign in'}
                 </Link>
             </form>
         </div>
+        </>
     )
 }

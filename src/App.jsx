@@ -12,7 +12,10 @@ import Reviews from './pages/Reviews'
 import { Search } from './pages/Search'
 import Showtimes from './pages/Showtimes'
 import ReactPaginate from 'react-paginate'
-import Authentication from './pages/Authentication'
+import Authentication, { AuthenticationMode } from './pages/Authentication'
+import axios from 'axios'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 
 function App() {
@@ -30,13 +33,14 @@ function App() {
         <Route path="/reviews" exact element={<Reviews/>}/>
         <Route path="/search" exact element={<Search/>}/>
         <Route path="/showtimes" exact element={<Showtimes/>}/>
-        <Route path="/authentication" exact element={<Authentication/>}/>
+        <Route path="/signin" element={<Authentication authenticationMode={AuthenticationMode.SignIn}/>}/>
+        <Route path="/signup" element={<Authentication authenticationMode={AuthenticationMode.SignUp}/>}/>
       </Routes>
     </div>
     <Footer/>
+    <ToastContainer/>
     </>
   )
 }
-
 
 export default App
