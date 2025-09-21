@@ -1,12 +1,14 @@
+DROP TABLE if exists userGroup, groups, favourites, review, movie, users;
 
-CREATE TABLE "User" (
+
+CREATE TABLE users (
     userID SERIAL PRIMARY KEY,
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     nickname VARCHAR(25) NOT NULL
 );
 
-CREATE TABLE Movie (
+CREATE TABLE movie (
     movieID SERIAL PRIMARY KEY,
     reviewID INT,
     userID INT NOT NULL,
@@ -15,41 +17,41 @@ CREATE TABLE Movie (
     text VARCHAR(2000),
     name VARCHAR(255) NOT NULL,
     genre VARCHAR(255),
-    FOREIGN KEY (userID) REFERENCES "User"(userID)
+    FOREIGN KEY (userID) REFERENCES users(userID)
 );
 
-CREATE TABLE Review (
+CREATE TABLE review (
     reviewID SERIAL PRIMARY KEY,
     movieID INT NOT NULL,
     userID INT NOT NULL,
     stars INT,
     date DATE,
     text VARCHAR(2000),
-    FOREIGN KEY (movieID) REFERENCES Movie(movieID),
-    FOREIGN KEY (userID) REFERENCES "User"(userID)
+    FOREIGN KEY (movieID) REFERENCES movie(movieID),
+    FOREIGN KEY (userID) REFERENCES users(userID)
 );
 
-CREATE TABLE Favourites (
+CREATE TABLE favourites (
     movieID INT NOT NULL,
     userID INT NOT NULL,
     PRIMARY KEY (userID, movieID),
-    FOREIGN KEY (movieID) REFERENCES Movie(movieID),
-    FOREIGN KEY (userID) REFERENCES "User"(userID)
+    FOREIGN KEY (movieID) REFERENCES movie(movieID),
+    FOREIGN KEY (userID) REFERENCES users(userID)
 );
 
-CREATE TABLE Groups (
+CREATE TABLE groups (
     groupID SERIAL PRIMARY KEY,
     groupname VARCHAR(255) NOT NULL,
     ownerID INT NOT NULL,
     description VARCHAR(2000),
-    FOREIGN KEY (ownerID) REFERENCES "User"(userID)
+    FOREIGN KEY (ownerID) REFERENCES users(userID)
 );
 
-CREATE TABLE UserGroup (
+CREATE TABLE userGroup (
     userID INT NOT NULL,
     groupID INT NOT NULL,
     role VARCHAR(25),
     PRIMARY KEY (userID, groupID),
-    FOREIGN KEY (userID) REFERENCES "User"(userID),
-    FOREIGN KEY (groupID) REFERENCES Groups(groupID)
+    FOREIGN KEY (userID) REFERENCES users(userID),
+    FOREIGN KEY (groupID) REFERENCES groups(groupID)
 );
