@@ -23,6 +23,20 @@ router.post('/signup', (req, res, next) => {
         [user.email, hashedPassword, user.nickname],
         (err, result) => {
             if(err) {
+                // checking if email or nickname are already stored in database
+                if(err.code === '23505') {
+                    console.log(err.constraint)
+                    // checking if email is already registered
+                    if(err.constraint === 'users_email_key') {
+                        return res.status(409).json({ error: 'Email already registered' })
+                    }
+                    // checking if nickname is already taken
+                    if(err.constraint === 'users_nickname_key') {
+                        return res.status(409).json({ error: 'Nickname already taken' })
+                    } else {
+                        return res.status(409).json({ error: 'Duplicate value not allowed' })
+                    }
+                }
                 return next(err)
             }
             console.log(result.rows[0])
@@ -61,16 +75,18 @@ router.post('/signin', (req, res, next) =>{
                 error.status = 401
                 return next(error)
             }
+
+            // create token for the user
+            const token = sign({user: dbUser.email}, process.env.JWT_SECRET)
+            res.status(200).json({
+                userid: dbUser.userid,
+                email: dbUser.email,
+                nickname: dbUser.nickname,
+                token
+            })
         })
 
-        // create token for the user
-        const token = sign({user: dbUser.email}, process.env.JWT_SECRET)
-        res.status(200).json({
-            userid: dbUser.userid,
-            email: dbUser.email,
-            nickname: dbUser.nickname,
-            token
-        })
+        
     })
 })
 

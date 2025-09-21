@@ -3,9 +3,9 @@ DROP TABLE if exists userGroup, groups, favourites, review, movie, users;
 
 CREATE TABLE users (
     userID SERIAL PRIMARY KEY,
-    email VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    nickname VARCHAR(25) NOT NULL
+    nickname VARCHAR(25) NOT NULL UNIQUE
 );
 
 CREATE TABLE movie (

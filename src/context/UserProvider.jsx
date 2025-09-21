@@ -22,11 +22,21 @@ export default function UserProvider({ children }) {
             setUser({ email: '', password: '', nickname: '' })  // empty fields after sign up
             toast.success('You have successfully signed up!')   // notifies user about succesfull sign up
         } catch (error) {
-            console.error(error)
-            toast.error('Error signing up') // notifies user in case of an error with sign up
+            if(error.response) {
+                if(error.response.data.error === 'Email already registered') {
+                    toast.error('This email is already registered. Sign in or use other email.')
+                } else if (error.response.data.error === 'Nickname already taken') {
+                        toast.error('This nickname is already taken. Choose another one.')
+                } else {
+                    toast.error(error.response.data.error)
+                }
+            } else {
+                toast.error('Error signing up')
+            }
+        }
+            
         }
         
-    }
 
     // Sign in function for existing users
     const signIn = async () => {
@@ -34,7 +44,7 @@ export default function UserProvider({ children }) {
 
         try {
             // POST request for backend
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/user/signin`, JSON.stringify({ user: user }),
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/user/signin`, { user: { email: user.email, password: user.password } },
             headers)
             console.log(response.data)
             // store user information in useState, excluding the password
@@ -49,13 +59,23 @@ export default function UserProvider({ children }) {
             sessionStorage.setItem('user', JSON.stringify({
                 email: response.data.email ?? '',
                 password: '',
-                nickname: response.data.nickname ?? ''}))
+                nickname: response.data.nickname ?? '',
+                token: response.data.token ?? ''})
+            )
             
             toast.success(`WELCOME, ${response.data.nickname}!`)   // notifies user about succesfull sign in
             
             } catch (error) {
                 console.error(error)
-                toast.error('Error logging in') // notifies user in case of an error with signing in
+                if(error.response) {
+                    if(error.response.status === 401) { // notifies user if signin fails due to invalid email or password
+                        toast.error('Invalid email or password')
+                    } else {
+                        toast.error(error.response.data.error || 'Error logging in')
+                    }
+                } else {
+                    toast.error('Error logging in')
+                }
             }
         
     }
