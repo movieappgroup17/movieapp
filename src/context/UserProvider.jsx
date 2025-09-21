@@ -57,6 +57,7 @@ export default function UserProvider({ children }) {
 
             // user information is saved to sessionStorage for the browser session
             sessionStorage.setItem('user', JSON.stringify({
+                userid: response.data.userid,
                 email: response.data.email ?? '',
                 password: '',
                 nickname: response.data.nickname ?? '',
@@ -80,9 +81,22 @@ export default function UserProvider({ children }) {
         
     }
 
+    // Delete account function
+    const deleteAccount = async (userID) => {
+        try {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/user/${userID}`)
+            setUser({ email: '', password: '', nickname: '' })
+            sessionStorage.removeItem('user')
+            toast.success('Account deleted succesfully!')
+        } catch (error) {
+            console.error(error)
+            toast.error('Error deleting account')
+        }
+    }
+
     // User information and functions are given to UserContext.Provider for the whole app to use
     return (
-        <UserContext.Provider value={{ user, setUser, signUp, signIn }}>
+        <UserContext.Provider value={{ user, setUser, signUp, signIn, deleteAccount }}>
             {children}
         </UserContext.Provider>
     )
