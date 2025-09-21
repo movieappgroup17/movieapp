@@ -43,7 +43,6 @@ export default function Authentication({ authenticationMode }) {
                     type='password' value={user.password}
                     onChange={e => setUser({ ...user, password: e.target.value })}/>
 
-                // nickname -input is shown only in sign up
                 { authenticationMode === AuthenticationMode.SignUp && (
                     <>
                         <label>Nickname</label>
