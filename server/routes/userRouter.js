@@ -91,9 +91,9 @@ router.post('/signin', (req, res, next) =>{
 })
 
 // router for deleting user account
-router.delete('/:email', async (req, res, next) => {
+router.delete('/:userid', async (req, res, next) => {
     try {
-        const userEmail = req.params.email
+        const userID = req.params.userid
         await pool.query('DELETE FROM usergroup WHERE userid = $1', [userID])
         await pool.query('DELETE FROM favourites WHERE userid = $1', [userID])
         await pool.query('DELETE FROM review WHERE userid = $1', [userID])

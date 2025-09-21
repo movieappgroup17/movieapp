@@ -33,6 +33,7 @@ export default function UserProvider({ children }) {
             } else {
                 toast.error('Error signing up')
             }
+            throw error
         }
             
         }
@@ -69,7 +70,7 @@ export default function UserProvider({ children }) {
             } catch (error) {
                 console.error(error)
                 if(error.response) {
-                    if(error.response.status === 401) { // notifies user if signin fails due to invalid email or password
+                    if(error.response.status === 401 || error.response.status === 404) { // notifies user if signin fails due to invalid email or password
                         toast.error('Invalid email or password')
                     } else {
                         toast.error(error.response.data.error || 'Error logging in')
@@ -77,6 +78,7 @@ export default function UserProvider({ children }) {
                 } else {
                     toast.error('Error logging in')
                 }
+                throw error
             }
         
     }
