@@ -15,14 +15,19 @@ export default function Authentication({ authenticationMode }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        const signFunction = authenticationMode === AuthenticationMode.SignUp ?
-            signUp : signIn
-        signFunction().then(response => {
-            navigate(authenticationMode === AuthenticationMode.SignUp ? '/signin' : '/')
-        })
-            .catch(error => {
-                alert(error)
-            })
+
+        try {
+        if (authenticationMode === AuthenticationMode.SignUp) {
+            await signUp()
+            navigate('/signin') // Only successful sign up leads to sign in
+        } else {
+            await signIn()      
+            navigate('/')       // Only successful sign up leads to home page
+        }
+    } catch (error) {
+        console.log('Login failed, user stays on same page')
+    }
+
     }
 
     return (
