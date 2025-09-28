@@ -1,8 +1,14 @@
-import React from 'react'
+import { useContext } from 'react'
 import './Navbar.css'
 import { Link } from 'react-router-dom'
+import { UserContext } from '../context/UserContext'
 
 export default function Navbar() {
+
+    const { user, logout } = useContext(UserContext)
+
+    const isLoggedIn = !!user?.userid   // Checks if user has logged in (user id is set as a boolean value)
+
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
         <div className="container-fluid">
@@ -24,20 +30,27 @@ export default function Navbar() {
                 <li className="nav-item">
                     <Link className='nav-link' to="/showtimes">Showtimes</Link>
                 </li>
-                <li className="nav-item">
-                    <Link className='nav-link' to="/favorites">Favorites</Link>
-                </li>
-                <li className="nav-item">
-                    <Link className='nav-link' to="/groups">Groups</Link>
-                </li>
-                <li className="nav-item">
-                    <Link className='nav-link' to="/profile">Profile</Link>
-                </li>
-                <li className="nav-item">
+                {!isLoggedIn && (
+                    <li className="nav-item">
                     <Link className='nav-link' to="/signin">Sign In</Link>
                 </li>
-                
-                
+                )}
+                {isLoggedIn && (
+                    <>
+                    <li className="nav-item">
+                    <Link className='nav-link' to="/favorites">Favorites</Link>
+                    </li>
+                    <li className="nav-item">
+                    <Link className='nav-link' to="/groups">Groups</Link>
+                    </li>
+                    <li className="nav-item">
+                    <Link className='nav-link' to="/profile">Profile</Link>
+                    </li>
+                    <li className="nav-item">
+                    <Link className='nav-link' to="/" onClick={logout}>Logout</Link>
+                    </li>
+                    </>
+                )}
             </ul>
             </div>
         </div>

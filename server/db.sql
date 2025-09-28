@@ -1,4 +1,4 @@
-DROP TABLE if exists userGroup, groups, favourites, review, movie, users;
+DROP TABLE if exists userGroup, groups, favourites, favourite_list, review, movie, users;
 
 
 CREATE TABLE users (
@@ -9,15 +9,25 @@ CREATE TABLE users (
 );
 
 CREATE TABLE movie (
-    movieID SERIAL PRIMARY KEY,
-    reviewID INT,
-    userID INT NOT NULL,
-    stars INT,
+    movieID INT PRIMARY KEY,
     date DATE,
     text VARCHAR(2000),
-    name VARCHAR(255) NOT NULL,
+    title VARCHAR(255) NOT NULL,
     genre VARCHAR(255),
-    FOREIGN KEY (userID) REFERENCES users(userID)
+    imageURL VARCHAR(255), 
+);
+
+CREATE TABLE favourites (
+    listID INT REFERENCES favourite_list(listID) ON DELETE CASCADE,
+    movieID INT REFERENCES movie(movieID) ON DELETE CASCADE,
+    PRIMARY KEY (listID, movieID)
+);
+
+CREATE TABLE favourite_list (
+    listID SERIAL PRIMARY KEY,
+    userID INT REFERENCES users(userID) ON DELETE CASCADE,
+    share_token UUID DEFAULT gen_random_uuid() UNIQUE,
+    isPublic BOOLEAN DEFAULT false
 );
 
 CREATE TABLE review (
@@ -27,14 +37,6 @@ CREATE TABLE review (
     stars INT,
     date DATE,
     text VARCHAR(2000),
-    FOREIGN KEY (movieID) REFERENCES movie(movieID),
-    FOREIGN KEY (userID) REFERENCES users(userID)
-);
-
-CREATE TABLE favourites (
-    movieID INT NOT NULL,
-    userID INT NOT NULL,
-    PRIMARY KEY (userID, movieID),
     FOREIGN KEY (movieID) REFERENCES movie(movieID),
     FOREIGN KEY (userID) REFERENCES users(userID)
 );
