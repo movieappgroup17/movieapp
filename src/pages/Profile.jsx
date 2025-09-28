@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 import Header from '../components/Header'
 import { UserContext } from '../context/UserContext'
 import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 
 export default function Profile() {
   const { user, deleteAccount } = useContext(UserContext)
@@ -25,6 +26,10 @@ export default function Profile() {
       <Header pageTitle={"Profile"}/>
       <div>
         <p>Profile</p>
+
+        <div><p>My favourites</p></div>
+
+
         {isLoggedIn && (
         <button onClick={handleDeleteAccount} className="delete-button">
           Delete your account

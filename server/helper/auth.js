@@ -12,6 +12,7 @@ verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
     return res.status(401).json({error: 'Failed to authenticate token'})
     }
+    req.user = { id: decoded.userID }
     next()
 })
 }  
