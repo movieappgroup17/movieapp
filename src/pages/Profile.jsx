@@ -4,7 +4,6 @@ import { UserContext } from '../context/UserContext'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'  // to notify user after login or signup
 import 'react-toastify/dist/ReactToastify.css';
-import './css/Profile.css'
 
 export default function Profile() {
   const { user, deleteAccount } = useContext(UserContext)
