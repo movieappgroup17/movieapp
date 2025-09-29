@@ -36,23 +36,27 @@ export default function Favorites() {
       <Header pageTitle={"Favorites"} />
       <div>
         <div>
-        <ul>
+        <ul class="list-group list-group-horizontal">
           {favouritelists.map(list => (
-            <li key={list.listID}>
-              <h2>{list.nickname}'s list</h2>
-              <ul>
+            <li key={list.listID} class="list-group-item">
+              <div class="ms-2 me-auto w-100 text-center fs-3">
+                  <div class="fw-bold">{list.nickname}'s list</div>
+              </div>
+              <ol class="list-group list-group-numbered">
                 {list.movies?.map(movie => (
-                  <li key={movie.movieID}>
-                    <h3>{movie.title}</h3>
-                    <img
+                  <li key={movie.movieID} class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                      <div class="fw-bold">{movie.title}</div>
+                      <img
                       src={movie.imageURL || "https://placehold.co/100x150?text=No+Image"}
                       alt={movie.title}
                       style={{ width: "100px" }}
                     />
-                    <p>{movie.genre || "Unknown genre"}</p>
+                    </div>
+                    <span class="badge text-bg-primary rounded-pill">{movie.genre || "Unknown genre"}</span>
                   </li>
                 ))}
-              </ul>
+              </ol>
             </li>
           ))}
         </ul>

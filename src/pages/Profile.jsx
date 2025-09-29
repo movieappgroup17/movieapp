@@ -4,6 +4,7 @@ import { UserContext } from '../context/UserContext'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'  // to notify user after login or signup
 import 'react-toastify/dist/ReactToastify.css';
+import './css/Profile.css'
 
 export default function Profile() {
   const { user, deleteAccount } = useContext(UserContext)
@@ -58,63 +59,85 @@ export default function Profile() {
   // shows user the page is trying to fetch favourites
   if (!favourites) return <p>Fetching favourites...</p>
 
-  
   return (
-    
-    <>
-      <Header pageTitle={"Profile"}/>
-      <div>
-        <h1>Profile</h1>
-        <div>
-          <h2>My favourites</h2>
-
-          {favourites.movies.length === 0 ? (
-            <p>You don't have favourite movies yet</p>
-          ) : (
-            <>
-            <ul>
-              {favourites.movies?.map(movie => (
-                <li key={movie.movieID}>
-                  <h3>{movie.title}</h3>
-                  <img src={movie.imageURL || "https://placehold.co/100x150?text=No+Image"} alt={movie.title} />
+  <>
+    <Header pageTitle={"Profile"} />
+    <div className="container mt-4">
+      {favourites.movies.length === 0 ? (
+        <p>You don't have favourite movies yet</p>
+      ) : (
+        <div id="favourites" className="row">
+          
+          <div id="favouritelist" className="col-md-4">
+            <h1>My favourites</h1>
+            <ul className="list-unstyled">
+              {favourites.movies?.map((movie) => (
+                <li key={movie.movieID} className="mb-3">
+                  <h5>{movie.title}</h5>
+                  <img
+                    src={
+                      movie.imageURL ||
+                      "https://placehold.co/100x150?text=No+Image"
+                    }
+                    alt={movie.title}
+                    className="img-thumbnail mb-2"
+                    style={{ width: "100px" }}
+                  />
                   <p>{movie.genre || "Unknown genre"}</p>
                 </li>
               ))}
             </ul>
-            <div>
-          <p>Public: {" "}
-            <span>{favourites.isPublic ? "Yes" : "No"}</span>
-          </p>
-          <button
-            onClick={handleTogglePublic}>{favourites.isPublic ? "Make Private" : "Make Public"}</button>
-          <p>Share link: </p>
-          <input 
-            type="text"
-            readOnly
-            value={`${window.location.origin}/favourites/share/${favourites.share_token}`}
-          />
-          <button
-            onClick={() => {
-              navigator.clipboard.writeText(`${window.location.origin}/favourites/share/${favourites.share_token}`)
-              toast.success("Link copied to clipboard")
-            }}>
-              Copy link
-          </button>
-        </div>
-        </>
+          </div>
+
+          <div id="favouriteOptions" className="col-md-4">
+            <div className="card p-3">
+              <p>
+                Public: <span>{favourites.isPublic ? "Yes" : "No"}</span>
+              </p>
+              <button
+                className="btn btn-primary d-flex justify-content-center align-items-center"
+                onClick={handleTogglePublic}
+              >
+                {favourites.isPublic ? "Make Private" : "Make Public"}
+              </button>
+
+              <p>Share link:</p>
+              <div className="input-group">
+                <input
+                  type="text"
+                  readOnly
+                  className="form-control"
+                  value={`${window.location.origin}/favourites/share/${favourites.share_token}`}
+                />
+                <button
+                  className="btn btn-outline-secondary d-flex justify-content-center align-items-center"
+                  onClick={() => {
+                    navigator.clipboard.writeText(
+                      `${window.location.origin}/favourites/share/${favourites.share_token}`
+                    );
+                    toast.success("Link copied to clipboard");
+                  }}
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {isLoggedIn && (
+            <div className="col-md-2 d-flex align-items-start justify-content-end">
+              <button
+              type='button'
+                onClick={handleDeleteAccount}
+                class="btn btn-danger d-flex justify-content-center align-items-center"
+              >
+                Delete your account
+              </button>
+            </div>
           )}
         </div>
-
-        
-
-        {isLoggedIn && (
-          <>
-        <button onClick={handleDeleteAccount} className="delete-button">
-          Delete your account
-        </button>
-        </>
-        )}
-      </div>
-    </>
+      )}
+    </div>
+  </>
   )
 }
