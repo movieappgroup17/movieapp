@@ -26,10 +26,10 @@ export default function Reviews() {
           reviews.map(review => (
             <div key={review.reviewid} className="review-card">
               <h3 className="movie-title">
-                <a href={`https://www.themoviedb.org/movie/${review.movieid}`} target="_blank">{review.name}</a>
+                <a href={`https://www.themoviedb.org/movie/${review.movieid}`} target="_blank">{review.title}</a>
               </h3>
               <div className="review-meta">
-                <span>Reviewed by: {review.email}</span>
+                <span>Reviewed by: {review.nickname}</span>
                 <span>Date: {new Date(review.date).toLocaleDateString()}</span>
                 <span className="rating">{"★".repeat(review.stars)}{"☆".repeat(5-review.stars)}</span>
               </div>
