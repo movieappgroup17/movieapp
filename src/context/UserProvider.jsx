@@ -104,9 +104,21 @@ export default function UserProvider({ children }) {
         }
     }
 
+    // Get all reviews function
+    const getReviews = async () => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/user/reviews`)
+            return response.data
+        } catch (error) {
+            console.error(error)
+            toast.error('Error fetching reviews')
+            return []
+        }
+    }
+
     // User information and functions are given to UserContext.Provider for the whole app to use
     return (
-        <UserContext.Provider value={{ user, setUser, logout, signUp, signIn, deleteAccount }}>
+        <UserContext.Provider value={{ user, setUser, logout, signUp, signIn, deleteAccount, getReviews }}>
             {children}
         </UserContext.Provider>
     )
