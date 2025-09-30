@@ -13,6 +13,13 @@ export default function UserProvider({ children }) {
     const [user, setUser] = useState(userFromStorage ? 
         JSON.parse(userFromStorage) : { email: '', password: '', nickname: '' })
 
+    // Logout function
+    const logout = () => {
+        sessionStorage.removeItem('user')
+        setUser({ email: '', password: '', nickname: '' })
+        toast.success('You have logged out! Byeee!')
+    }
+
     // Sign up function for new users
     const signUp = async () => {
         const headers = { headers: { 'Content-Type': 'application/json' } }
@@ -50,6 +57,7 @@ export default function UserProvider({ children }) {
             console.log(response.data)
             // store user information in useState, excluding the password
             setUser({
+                userid: response.data.userid,
                 email: response.data.email,
                 password: '',
                 nickname: response.data.nickname
@@ -110,7 +118,7 @@ export default function UserProvider({ children }) {
 
     // User information and functions are given to UserContext.Provider for the whole app to use
     return (
-        <UserContext.Provider value={{ user, setUser, signUp, signIn, deleteAccount, getReviews }}>
+        <UserContext.Provider value={{ user, setUser, logout, signUp, signIn, deleteAccount, getReviews }}>
             {children}
         </UserContext.Provider>
     )

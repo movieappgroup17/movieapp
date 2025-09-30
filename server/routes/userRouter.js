@@ -109,7 +109,7 @@ router.delete('/:userid', async (req, res, next) => {
 // router for getting all reviews
 router.get('/reviews', (req, res, next) => {
     pool.query(
-        `SELECT r.reviewid, r.movieid, r.text, r.date, r.stars, u.email, m.name 
+        `SELECT r.reviewid, r.movieid, r.text, r.date, r.stars, u.nickname, m.title 
         FROM review r 
         JOIN users u ON r.userid = u.userid 
         JOIN movie m ON r.movieid = m.movieid 
