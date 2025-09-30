@@ -14,13 +14,7 @@ CREATE TABLE movie (
     text VARCHAR(2000),
     title VARCHAR(255) NOT NULL,
     genre VARCHAR(255),
-    imageURL VARCHAR(255), 
-);
-
-CREATE TABLE favourites (
-    listID INT REFERENCES favourite_list(listID) ON DELETE CASCADE,
-    movieID INT REFERENCES movie(movieID) ON DELETE CASCADE,
-    PRIMARY KEY (listID, movieID)
+    imageURL VARCHAR(255) 
 );
 
 CREATE TABLE favourite_list (
@@ -28,6 +22,12 @@ CREATE TABLE favourite_list (
     userID INT REFERENCES users(userID) ON DELETE CASCADE,
     share_token UUID DEFAULT gen_random_uuid() UNIQUE,
     isPublic BOOLEAN DEFAULT false
+);
+
+CREATE TABLE favourites (
+    listID INT REFERENCES favourite_list(listID) ON DELETE CASCADE,
+    movieID INT REFERENCES movie(movieID) ON DELETE CASCADE,
+    PRIMARY KEY (listID, movieID)
 );
 
 CREATE TABLE review (
