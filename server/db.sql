@@ -10,8 +10,7 @@ CREATE TABLE users (
 
 CREATE TABLE movie (
     movieID SERIAL PRIMARY KEY,
-    reviewID INT,
-    userID INT NOT NULL,
+    userID INT,
     stars INT,
     date DATE,
     text VARCHAR(2000),

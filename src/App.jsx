@@ -31,6 +31,7 @@ function App() {
         <Route path="/*" exact element={<NotFound/>}/>
         <Route path="/profile" exact element={<Profile/>}/>
         <Route path="/reviews" exact element={<Reviews/>}/>
+        <Route path="/review/:movieID" exact element={<Reviews/>}/>
         <Route path="/search" exact element={<Search/>}/>
         <Route path="/showtimes" exact element={<Showtimes/>}/>
         <Route path="/signin" element={<Authentication authenticationMode={AuthenticationMode.SignIn}/>}/>

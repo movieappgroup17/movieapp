@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { UserContext } from './UserContext'
 import axios from 'axios'
-import { toast } from 'react-toastify'  // to notify user after login or signup
+import { toast, ToastContainer } from 'react-toastify'  // to notify user after login or signup
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -50,9 +50,11 @@ export default function UserProvider({ children }) {
             console.log(response.data)
             // store user information in useState, excluding the password
             setUser({
+                userid: response.data.userid,
                 email: response.data.email,
                 password: '',
-                nickname: response.data.nickname
+                nickname: response.data.nickname,
+                token: response.data.token
             })
             console.log("responsedata:", response.data)
 
