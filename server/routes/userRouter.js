@@ -106,4 +106,21 @@ router.delete('/:userid', async (req, res, next) => {
     }
 })
 
+// router for getting all reviews
+router.get('/reviews', (req, res, next) => {
+    pool.query(
+        `SELECT r.reviewid, r.movieid, r.text, r.date, r.stars, u.nickname, m.title 
+        FROM review r 
+        JOIN users u ON r.userid = u.userid 
+        JOIN movie m ON r.movieid = m.movieid 
+        ORDER BY r.date DESC`,
+    (err, result) => {
+        if (err) {
+            console.error('Reviews fetch error:', err)
+            return next(err)
+        }
+        res.json(result.rows)
+    })
+})
+
 export default router

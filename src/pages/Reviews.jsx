@@ -1,13 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Header from "../components/Header";
 import ReviewsList from "../components/ReviewsList";
 import ReviewForm from "../components/ReviewForm.jsx";
 import { useUser } from "../context/useUser";
 import { useLocation, useParams } from "react-router-dom";
-
+import { UserContext } from '../context/UserContext'
+import './css/Reviews.css'
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
 export default function Reviews() {
+  // component for fetching reviews
+  useEffect(() => {
+    const fetchReviews = async () => {
+      const reviewData = await getReviews()
+      setReviews(reviewData)
+    }
+    fetchReviews()
+  }, [])
+
   const { user } = useUser();
   const [reviews, setReviews] = useState([]);
   const [tmdbMovies, setTmdbMovies] = useState({});
@@ -61,26 +71,26 @@ export default function Reviews() {
 
   return (
     <>
-      <Header pageTitle="My Reviews" />
-      <div className="container mx-auto p-4">
-        <h2 className="text-xl font-bold mb-4">Your Reviews</h2>
-
-        {user?.userid && movieID && (
-        <ReviewForm
-        tmdbMovies={{
-        [movieID]: { title, poster_path: poster, overview }
-        }}
-        movieID={movieID}
-        onReviewAdded={newReview => setReviews(prev => [newReview, ...prev])}
-        />
-        )}
-
+      <Header pageTitle={"Reviews"}/>
+      <div className="reviews-container">
         {reviews.length === 0 ? (
-          <p>You haven't written any reviews yet.</p>
+          <p>No reviews found</p>
         ) : (
-          <ReviewsList reviews={reviews} tmdbMovies={tmdbMovies} />
+          reviews.map(review => (
+            <div key={review.reviewid} className="review-card">
+              <h3 className="movie-title">
+                <a href={`https://www.themoviedb.org/movie/${review.movieid}`} target="_blank">{review.title}</a>
+              </h3>
+              <div className="review-meta">
+                <span>Reviewed by: {review.nickname}</span>
+                <span>Date: {new Date(review.date).toLocaleDateString()}</span>
+                <span className="rating">{"★".repeat(review.stars)}{"☆".repeat(5-review.stars)}</span>
+              </div>
+              <p className="review-text">{review.text}</p>
+            </div>
+          ))
         )}
       </div>
     </>
-  );
+  )
 }
