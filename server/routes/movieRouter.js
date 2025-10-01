@@ -24,45 +24,52 @@ router.get("/:movieID", async (req, res) => {
 
 // POST getOrCreate a movie from TMDB
 router.post("/getOrCreate", async (req, res) => {
-  const { tmdbId, title, release_date, overview } = req.body;
-
+  const { tmdbId, title, release_date, overview, genre, imageURL } = req.body
+  //console.log("Incoming getOrCreate movie body:", req.body)
   if (!tmdbId || !title) {
-    return res.status(400).json({ error: "tmdbId and title are required" });
+    return res.status(400).json({ error: "tmdbId and title are required" })
   }
 
   try {
-    // Check if movie already exists by movieID (tmdbId)
+    // Check if movie already exists
     const existing = await pool.query(
       "SELECT * FROM movie WHERE movieID = $1",
       [tmdbId]
     );
 
     if (existing.rows.length > 0) {
-      return res.json(existing.rows[0]);
+      return res.json(existing.rows[0])
     }
 
-    // Insert new movie with userID = null (since this is just a catalog entry)
+    // Insert new movie
     const insert = await pool.query(
-      `INSERT INTO movie (movieID, userID, name, date, text)
-       VALUES ($1, NULL, $2, $3, $4) RETURNING *`,
-      [tmdbId, title, release_date || null, overview || null]
+      `INSERT INTO movie (movieID, title, date, text, genre, imageURL)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      [
+        tmdbId,
+        title,
+        release_date || null,
+        overview || null,
+        genre || null,
+        imageURL || null,
+      ]
     );
 
-    res.json(insert.rows[0]);
+    res.json(insert.rows[0])
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Database error" });
+    res.status(500).json({ error: "Database error" })
   }
-});
+})
 
 // POST add a review
 router.post("/review", async (req, res) => {
-  const { movieID, stars, text, date } = req.body;
-  const userID = req.userID
+  const { movieID, userID, stars, text, date } = req.body
+
   if (!movieID || !userID || !stars) {
     return res
       .status(400)
-      .json({ error: "movieID, userID, and stars are required" });
+      .json({ error: "movieID, userID, and stars are required" })
   }
 
   try {
@@ -70,13 +77,13 @@ router.post("/review", async (req, res) => {
       `INSERT INTO review (movieID, userID, stars, text, date)
        VALUES ($1, $2, $3, $4, $5) RETURNING *`,
       [movieID, userID, stars, text || null, date || new Date()]
-    );
+    )
 
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Database error" });
+    res.status(500).json({ error: "Database error" })
   }
-});
+})
 
-export default router;
+export default router

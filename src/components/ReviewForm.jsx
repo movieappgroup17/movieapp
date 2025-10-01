@@ -1,32 +1,31 @@
 import { useState } from "react"
 import { useUser } from "../context/useUser"
 
-export default function ReviewForm({ movieID, onReviewAdded }) {
-  const { user } = useUser();
+export default function ReviewForm({ movieID, onReviewAdded, tmdbMovies = {} }) {
+  const { user } = useUser()
   const [stars, setStars] = useState(0)
   const [text, setText] = useState("")
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const tmdb = tmdbMovies[movieID]
 
+  const handleSubmit = async (e) => {
+    e.preventDefault()
     if (!user?.token) {
       alert("You must be signed in to submit a review")
       return
     }
-
     try {
       const res = await fetch("http://localhost:3001/reviews", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": user.token
+          Authorization: user.token
         },
         body: JSON.stringify({
           movieID,
           userID: user.userid,
           stars,
-          text,
-          date: new Date()
+          text
         })
       })
 
@@ -37,10 +36,8 @@ export default function ReviewForm({ movieID, onReviewAdded }) {
         return
       }
 
-      const newReview = await res.json();
-      newReview.useremail = user.nickname || user.email
-      console.log("newly added review:", newReview)
-      onReviewAdded(newReview)
+      const newReview = await res.json()
+      if (onReviewAdded) onReviewAdded(newReview)
       setStars(0)
       setText("")
     } catch (err) {
@@ -50,12 +47,22 @@ export default function ReviewForm({ movieID, onReviewAdded }) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="review-form">
+      {tmdb?.poster_path && (
+        <div className="mb-2">
+          <img
+            src={`https://image.tmdb.org/t/p/w200${tmdb.poster_path}`}
+            alt={tmdb.title}
+            className="rounded"
+          />
+        </div>
+      )}
+
       <label>Stars</label>
       <input
         type="number"
         value={stars}
-        onChange={e => setStars(Number(e.target.value))}
+        onChange={(e) => setStars(Number(e.target.value))}
         min={1}
         max={5}
         required
@@ -64,8 +71,9 @@ export default function ReviewForm({ movieID, onReviewAdded }) {
       <label>Review</label>
       <textarea
         value={text}
-        onChange={e => setText(e.target.value)}
+        onChange={(e) => setText(e.target.value)}
         placeholder="Write your review here..."
+        required
       />
 
       <button type="submit">Submit Review</button>
