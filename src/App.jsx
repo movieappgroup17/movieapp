@@ -17,6 +17,7 @@ import Authentication, { AuthenticationMode } from './pages/Authentication'
 import axios from 'axios'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import ProtectedRoute from './components/ProtectedRoute'
 
 
 function App() {
@@ -27,16 +28,18 @@ function App() {
     <div id="container">
       <Routes>
         <Route path="/" exact element={<Home/>}/>
-        <Route path="/favorites" exact element={<Favorites/>}/>
-        <Route path="/favourites/share/:token" element={<SharedFavouriteList/>}/>
-        <Route path="/groups" exact element={<Groups/>}/>
-        <Route path="/*" exact element={<NotFound/>}/>
-        <Route path="/profile" exact element={<Profile/>}/>
+        <Route path="/signin" element={<Authentication authenticationMode={AuthenticationMode.SignIn}/>}/>
+        <Route path="/signup" element={<Authentication authenticationMode={AuthenticationMode.SignUp}/>}/>
         <Route path="/reviews" exact element={<Reviews/>}/>
         <Route path="/search" exact element={<Search/>}/>
         <Route path="/showtimes" exact element={<Showtimes/>}/>
-        <Route path="/signin" element={<Authentication authenticationMode={AuthenticationMode.SignIn}/>}/>
-        <Route path="/signup" element={<Authentication authenticationMode={AuthenticationMode.SignUp}/>}/>
+        <Route path="/favourites/share/:token" element={<SharedFavouriteList/>}/>
+        <Route path="/*" exact element={<NotFound/>}/>
+        <Route element={<ProtectedRoute />}>
+          <Route path="/profile" exact element={<Profile/>}/>
+          <Route path="/favorites" exact element={<Favorites/>}/>
+          <Route path="/groups" exact element={<Groups/>}/>
+        </Route>
       </Routes>
     </div>
     <Footer/>

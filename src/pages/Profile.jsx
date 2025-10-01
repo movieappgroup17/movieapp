@@ -29,7 +29,7 @@ export default function Profile() {
     const userFromStorage = JSON.parse(sessionStorage.getItem('user'))
     
     if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-        await deleteAccount(userFromStorage.userid)
+        await deleteAccount(userFromStorage.token)
         navigate('/signin')
     }
   }
@@ -122,8 +122,9 @@ export default function Profile() {
               </div>
             </div>
           </div>
-
-          {isLoggedIn && (
+        </div>
+      )}
+      {isLoggedIn && (
             <div className="col-md-2 d-flex align-items-start justify-content-end">
               <button
               type='button'
@@ -134,8 +135,6 @@ export default function Profile() {
               </button>
             </div>
           )}
-        </div>
-      )}
     </div>
   </>
   )
