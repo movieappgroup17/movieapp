@@ -7,6 +7,7 @@ import Home from './pages/Home'
 import Favorites from './pages/Favorites'
 import SharedFavouriteList from './pages/SharedFavouritelist'
 import Groups from './pages/Groups'
+import GroupPage from './pages/GroupPage'
 import NotFound from './pages/NotFound'
 import Profile from './pages/Profile'
 import Reviews from './pages/Reviews'
@@ -30,6 +31,7 @@ function App() {
         <Route path="/favorites" exact element={<Favorites/>}/>
         <Route path="/favourites/share/:token" element={<SharedFavouriteList/>}/>
         <Route path="/groups" exact element={<Groups/>}/>
+        <Route path="/groups/:id" element={<GroupPage />} />
         <Route path="/*" exact element={<NotFound/>}/>
         <Route path="/profile" exact element={<Profile/>}/>
         <Route path="/reviews" exact element={<Reviews/>}/>

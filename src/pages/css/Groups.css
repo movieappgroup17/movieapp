@@ -1,0 +1,9 @@
+.group-card h4 {
+    color: #007bff;
+    cursor: pointer;
+    margin: 0 0 10px 0;
+}
+
+.group-card h4:hover {
+    text-decoration: underline;
+}
