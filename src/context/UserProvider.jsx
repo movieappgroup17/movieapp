@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { UserContext } from './UserContext'
 import axios from 'axios'
-import { toast } from 'react-toastify'  // to notify user after login or signup
+import { toast, ToastContainer } from 'react-toastify'  // to notify user after login or signup
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -12,6 +12,13 @@ export default function UserProvider({ children }) {
     // setting useState for user and parsing the information if found
     const [user, setUser] = useState(userFromStorage ? 
         JSON.parse(userFromStorage) : { email: '', password: '', nickname: '' })
+
+    // Logout function
+    const logout = () => {
+        sessionStorage.removeItem('user')
+        setUser({ email: '', password: '', nickname: '' })
+        toast.success('You have logged out! Byeee!')
+    }
 
     // Sign up function for new users
     const signUp = async () => {
@@ -50,9 +57,11 @@ export default function UserProvider({ children }) {
             console.log(response.data)
             // store user information in useState, excluding the password
             setUser({
+                userid: response.data.userid,
                 email: response.data.email,
                 password: '',
-                nickname: response.data.nickname
+                nickname: response.data.nickname,
+                token: response.data.token
             })
             console.log("responsedata:", response.data)
 
@@ -96,9 +105,21 @@ export default function UserProvider({ children }) {
         }
     }
 
+    // Get all reviews function
+    const getReviews = async () => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/user/reviews`)
+            return response.data
+        } catch (error) {
+            console.error(error)
+            toast.error('Error fetching reviews')
+            return []
+        }
+    }
+
     // User information and functions are given to UserContext.Provider for the whole app to use
     return (
-        <UserContext.Provider value={{ user, setUser, signUp, signIn, deleteAccount }}>
+        <UserContext.Provider value={{ user, setUser, logout, signUp, signIn, deleteAccount, getReviews }}>
             {children}
         </UserContext.Provider>
     )

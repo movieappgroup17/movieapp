@@ -6,6 +6,7 @@ import { BrowserRouter, RouterProvider, createBrowserRouter } from 'react-router
 import Authentication, { AuthenticationMode } from './pages/Authentication'
 import NotFound from './pages/NotFound.jsx'
 import UserProvider from './context/UserProvider.jsx'
+import { ToastContainer } from 'react-toastify'
 
 
 createRoot(document.getElementById('root')).render(

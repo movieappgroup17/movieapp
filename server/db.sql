@@ -14,12 +14,14 @@ CREATE TABLE movie (
     text VARCHAR(2000),
     title VARCHAR(255) NOT NULL,
     genre VARCHAR(255),
-    imageURL VARCHAR(255), 
+    imageURL VARCHAR(255) 
 );
+
 CREATE TABLE favourite_list (
     listID SERIAL PRIMARY KEY,
     userID INT REFERENCES users(userID) ON DELETE CASCADE,
-    share_token UUID DEFAULT gen_random_uuid() UNIQUE
+    share_token UUID DEFAULT gen_random_uuid() UNIQUE,
+    isPublic BOOLEAN DEFAULT false
 );
 
 CREATE TABLE favourites (

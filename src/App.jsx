@@ -5,6 +5,7 @@ import Footer from './components/Footer'
 import Header from './components/Header'
 import Home from './pages/Home'
 import Favorites from './pages/Favorites'
+import SharedFavouriteList from './pages/SharedFavouritelist'
 import Groups from './pages/Groups'
 import NotFound from './pages/NotFound'
 import Profile from './pages/Profile'
@@ -27,10 +28,12 @@ function App() {
       <Routes>
         <Route path="/" exact element={<Home/>}/>
         <Route path="/favorites" exact element={<Favorites/>}/>
+        <Route path="/favourites/share/:token" element={<SharedFavouriteList/>}/>
         <Route path="/groups" exact element={<Groups/>}/>
         <Route path="/*" exact element={<NotFound/>}/>
         <Route path="/profile" exact element={<Profile/>}/>
         <Route path="/reviews" exact element={<Reviews/>}/>
+        <Route path="/review/:movieID" exact element={<Reviews/>}/>
         <Route path="/search" exact element={<Search/>}/>
         <Route path="/showtimes" exact element={<Showtimes/>}/>
         <Route path="/signin" element={<Authentication authenticationMode={AuthenticationMode.SignIn}/>}/>
