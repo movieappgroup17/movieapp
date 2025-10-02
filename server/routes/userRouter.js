@@ -1,4 +1,5 @@
 import { pool } from '../helper/db.js'
+import { auth } from '../helper/auth.js'
 import { Router } from 'express'
 import { compare, hash } from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -77,8 +78,13 @@ router.post('/signin', (req, res, next) =>{
             }
 
             // create token for the user
-            const token = sign({user: dbUser.email}, process.env.JWT_SECRET)
-            res.status(200).json({
+            const token = sign({user: dbUser.email}, process.env.JWT_SECRET, {expiresIn: '15m'})
+            // set Authorization-header to response
+            res
+                .header('Access-Control-Expose-Headers','Authorization')    // Needed to allow the front to read header
+                .header('Authorization','Bearer ' + token)  // Add token to response-header
+                .status(200)
+                .json({
                 userid: dbUser.userid,
                 email: dbUser.email,
                 nickname: dbUser.nickname,
@@ -91,17 +97,33 @@ router.post('/signin', (req, res, next) =>{
 })
 
 // router for deleting user account
-router.delete('/:userid', async (req, res, next) => {
+router.delete('/', auth, async (req, res, next) => {
     try {
-        const userID = req.params.userid
-        await pool.query('DELETE FROM usergroup WHERE userid = $1', [userID])
-        await pool.query('DELETE FROM favourites WHERE userid = $1', [userID])
-        await pool.query('DELETE FROM review WHERE userid = $1', [userID])
-        await pool.query('DELETE FROM movie WHERE userid = $1', [userID])
-        await pool.query('DELETE FROM groups WHERE ownerid = $1', [userID])
-        await pool.query('DELETE FROM users WHERE userid = $1', [userID])
+        const email = req.user.user // get email from token
+        console.log('deleten email: ', email)
+
+        if (!email) {
+            return res.status(400).json({ error: 'No email in token' })
+        }
+
+        // get user id from database by user email
+        const { rows } = await pool.query('SELECT userID FROM users WHERE email = $1', [email])
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'User not found' })
+        }
+
+        const userID = rows[0].userid   // set user id to variable
+
+        await pool.query('DELETE FROM usergroup WHERE userID = $1', [userID])
+        await pool.query('DELETE FROM favourite_list WHERE userID = $1', [userID])
+        await pool.query('DELETE FROM review WHERE userID = $1', [userID])
+        //await pool.query('DELETE FROM movie WHERE userID = $1', [userID])
+        await pool.query('DELETE FROM groups WHERE ownerID = $1', [userID])
+        await pool.query('DELETE FROM users WHERE userID = $1', [userID])
         res.json({ message: 'Account deleted.' })
     } catch (error) {
+        console.error('Delete account error:', error)
         return next(error)
     }
 })

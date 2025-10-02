@@ -16,7 +16,7 @@ export default function UserProvider({ children }) {
     // Logout function
     const logout = () => {
         sessionStorage.removeItem('user')
-        setUser({ email: '', password: '', nickname: '' })
+        setUser({ email: '', password: '', nickname: '', token: '' })
         toast.success('You have logged out! Byeee!')
     }
 
@@ -54,6 +54,7 @@ export default function UserProvider({ children }) {
             // POST request for backend
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/user/signin`, { user: { email: user.email, password: user.password } },
             headers)
+            const token = readAuthorizationHeader(response) // token is set via function
             console.log(response.data)
             // store user information in useState, excluding the password
             setUser({
@@ -89,14 +90,27 @@ export default function UserProvider({ children }) {
                 }
                 throw error
             }
-        
+    }
+
+    // function to read authorization header and to return token
+    const readAuthorizationHeader = (response) => {
+        const authHeader = response.headers['authorization']
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            return authHeader.split(' ')[1]
+        }
+        return null
     }
 
     // Delete account function
-    const deleteAccount = async (userID) => {
+    const deleteAccount = async (token) => {
         try {
-            await axios.delete(`${import.meta.env.VITE_API_URL}/user/${userID}`)
-            setUser({ email: '', password: '', nickname: '' })
+            console.log('UserProviderissa token: ', token)
+            await axios.delete(`${import.meta.env.VITE_API_URL}/user`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            setUser({ email: '', password: '', nickname: '', token: '' })
             sessionStorage.removeItem('user')
             toast.success('Account deleted succesfully!')
         } catch (error) {
