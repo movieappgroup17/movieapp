@@ -31,6 +31,7 @@ function App() {
         <Route path="/signin" element={<Authentication authenticationMode={AuthenticationMode.SignIn}/>}/>
         <Route path="/signup" element={<Authentication authenticationMode={AuthenticationMode.SignUp}/>}/>
         <Route path="/reviews" exact element={<Reviews/>}/>
+        <Route path="/review/:movieID" exact element={<Reviews/>}/>
         <Route path="/search" exact element={<Search/>}/>
         <Route path="/showtimes" exact element={<Showtimes/>}/>
         <Route path="/favourites/share/:token" element={<SharedFavouriteList/>}/>
