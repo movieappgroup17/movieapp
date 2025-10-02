@@ -108,6 +108,7 @@ function Search() {
             <div id="movieTitle">{m.title}</div>
             <div>{m.release_date}</div>
             <div id="movieDescription"> {m.overview && <p>{m.overview}</p>}</div>
+            <ToggleFav movie={{ id: m.id, title: m.title }} />
         {movieIDs[m.id] ? (
         <button onClick={() => navigate(`/review/${movieIDs[m.id]}`,
          { state: {

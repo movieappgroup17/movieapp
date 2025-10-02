@@ -19,7 +19,7 @@ CREATE TABLE movie (
 
 CREATE TABLE favourite_list (
     listID SERIAL PRIMARY KEY,
-    userID INT REFERENCES users(userID) ON DELETE CASCADE,
+    userID INT UNIQUE REFERENCES users(userID) ON DELETE CASCADE,
     share_token UUID DEFAULT gen_random_uuid() UNIQUE,
     isPublic BOOLEAN DEFAULT false
 );

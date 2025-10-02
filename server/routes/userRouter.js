@@ -77,7 +77,11 @@ router.post('/signin', (req, res, next) =>{
             }
 
             // create token for the user
-            const token = sign({user: dbUser.email}, process.env.JWT_SECRET)
+            //const token = sign({user: dbUser.email}, process.env.JWT_SECRET)
+            const token = sign(
+                { id: dbUser.userid, email: dbUser.email },
+                process.env.JWT_SECRET
+              )
             res.status(200).json({
                 userid: dbUser.userid,
                 email: dbUser.email,

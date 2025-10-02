@@ -63,7 +63,8 @@ export default function UserProvider({ children }) {
                 nickname: response.data.nickname,
                 token: response.data.token
             })
-            console.log("responsedata:", response.data)
+
+            localStorage.setItem('token', response.data.token)
 
             // user information is saved to sessionStorage for the browser session
             sessionStorage.setItem('user', JSON.stringify({
