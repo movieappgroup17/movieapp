@@ -129,7 +129,7 @@ export default function Profile() {
               <button
               type='button'
                 onClick={handleDeleteAccount}
-                class="btn btn-danger d-flex justify-content-center align-items-center"
+                className="btn btn-danger d-flex justify-content-center align-items-center"
               >
                 Delete your account
               </button>

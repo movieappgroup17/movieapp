@@ -19,7 +19,7 @@ export default function ReviewForm({ movieID, onReviewAdded, tmdbMovies = {} }) 
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: user.token
+          Authorization: `Bearer ${user.token}`
         },
         body: JSON.stringify({
           movieID,
