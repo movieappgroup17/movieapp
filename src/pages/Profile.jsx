@@ -9,6 +9,7 @@ export default function Profile() {
   const { user, deleteAccount } = useContext(UserContext)
   const navigate = useNavigate()
   const [favourites, setFavourites] = useState(null)
+  const [myGroups, setMyGroups] = useState(null)
 
   const isLoggedIn = sessionStorage.getItem('user')
 
@@ -24,6 +25,11 @@ export default function Profile() {
     .then(data => setFavourites(data))  // set favourites with useState
     .catch(err => console.error(err))
   }, [userID])
+
+  /*useEffect(() => {
+    if(!userID) return  // does not fetch if user is not found
+    fetch()
+  })*/
 
   const handleDeleteAccount = async () => {
     const userFromStorage = JSON.parse(sessionStorage.getItem('user'))

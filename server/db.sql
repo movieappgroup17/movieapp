@@ -1,11 +1,12 @@
-DROP TABLE if exists userGroup, groups, favourites, favourite_list, review, movie, users;
+DROP TABLE if exists joinRequest, userGroup, groups, favourites, favourite_list, review, movie, users;
 
 
 CREATE TABLE users (
     userID SERIAL PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    nickname VARCHAR(25) NOT NULL UNIQUE
+    nickname VARCHAR(25) NOT NULL UNIQUE,
+    refresh_token VARCHAR(512)
 );
 
 CREATE TABLE movie (
@@ -54,6 +55,16 @@ CREATE TABLE userGroup (
     groupID INT NOT NULL,
     role VARCHAR(25),
     PRIMARY KEY (userID, groupID),
-    FOREIGN KEY (userID) REFERENCES users(userID),
-    FOREIGN KEY (groupID) REFERENCES groups(groupID)
+    FOREIGN KEY (userID) REFERENCES users(userID) ON DELETE CASCADE,
+    FOREIGN KEY (groupID) REFERENCES groups(groupID) ON DELETE CASCADE
+);
+
+CREATE TABLE joinRequest (
+    requestID SERIAL PRIMARY KEY,
+    groupID INT NOT NULL,
+    userID INT NOT NULL,
+    status VARCHAR(10),
+    createdAt DATE DEFAULT CURRENT_DATE,
+    FOREIGN KEY (groupID) REFERENCES groups(groupID) ON DELETE CASCADE,
+    FOREIGN KEY (userID) REFERENCES users(userID) ON DELETE CASCADE
 );

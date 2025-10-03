@@ -4,11 +4,13 @@ import { UserContext } from '../context/UserContext'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import './css/Groups.css'
+import { sendJoinReq } from '../components/GroupFunctions'
 
 export default function Groups() {
   const [groups, setGroups] = useState([])
   const [groupname, setGroupname] = useState('')
   const [description, setDescription] = useState('')
+  const [joinRequest, setJoinRequest] = useState('')
   const navigate = useNavigate()
   const { user, createGroup, getGroups, deleteGroup, checkIsGroupMember } = useContext(UserContext)
   const isLoggedIn = sessionStorage.getItem('user')
@@ -58,6 +60,19 @@ export default function Groups() {
     navigate(`/groups/${groupid}`)
   }
 
+  // joining request
+  const handleJoinRequest = async (groupid, ownerid) => {
+
+    const userFromStorage = JSON.parse(sessionStorage.getItem('user'))
+    if (userFromStorage.userid !== ownerid) {
+
+      sendJoinReq(groupid, userFromStorage.userid)
+    } else {
+      toast.error("You are owner of this group!")
+      return
+    }
+  }
+
   return (
     <>
       <Header pageTitle={"Groups"}/>
@@ -86,9 +101,12 @@ export default function Groups() {
               <p>Owner: {group.owner}</p>
               <p>{group.description}</p>
               {isLoggedIn && (
+                <>
                 <button onClick={() => handleDeleteGroup(group.groupid, group.ownerid)}>
                   Delete group
                 </button>
+                <button onClick={() => handleJoinRequest(group.groupid, group.ownerid)}>Join group</button>
+                </>
               )}
             </div>
           ))
