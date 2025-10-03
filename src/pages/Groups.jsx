@@ -10,7 +10,6 @@ export default function Groups() {
   const [groups, setGroups] = useState([])
   const [groupname, setGroupname] = useState('')
   const [description, setDescription] = useState('')
-  const [joinRequest, setJoinRequest] = useState('')
   const navigate = useNavigate()
   const { user, createGroup, getGroups, deleteGroup, checkIsGroupMember } = useContext(UserContext)
   const isLoggedIn = sessionStorage.getItem('user')
@@ -60,12 +59,13 @@ export default function Groups() {
     navigate(`/groups/${groupid}`)
   }
 
-  // joining request
+  // function to handle joining request
   const handleJoinRequest = async (groupid, ownerid) => {
 
     const userFromStorage = JSON.parse(sessionStorage.getItem('user'))
+    // if request sender is not the owner of the group, it allows to send request
     if (userFromStorage.userid !== ownerid) {
-
+      // calls function to send join request to the selected group
       sendJoinReq(groupid, userFromStorage.userid)
     } else {
       toast.error("You are owner of this group!")

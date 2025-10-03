@@ -20,7 +20,7 @@ router.get('/', (req, res, next) => {
         })
 })
 
-// router for fetching users groups
+// router for fetching users groups on profile page
 router.get('/mygroups/:userid', (req, res, next) => {
     const userID = req.params.userid
     pool.query(`
@@ -54,9 +54,10 @@ router.post('/', async (req, res, next) => {
         'INSERT INTO groups (groupname, ownerid, description) VALUES ($1, $2, $3) RETURNING *',
         [groupname, ownerid, description])
 
-        const groupid = insertResult.rows[0].groupid
-        console.log("ryhmä lisätty ja sen id: ", groupid)
+        const groupid = insertResult.rows[0].groupid    // previously created group´s id is set to variable
+        //console.log("ryhmä lisätty ja sen id: ", groupid)
         
+        // Group creator is made the owner of the group
         await pool.query(
             `INSERT INTO userGroup (userID, groupID, role) VALUES ($1, $2, 'owner')`, [ownerid, groupid]
         )
@@ -95,7 +96,7 @@ router.get('/:id', (req, res, next) => {
         })
 })
 
-// router for getting pending join-requests
+// router for getting pending join-requests to the owner of the group
 router.get('/pending/:userid', (req, res, next) => {
     const ownerid = req.params.userid
 
@@ -111,7 +112,7 @@ router.get('/pending/:userid', (req, res, next) => {
         })
 })
 
-// router for joining request
+// router for sending group joining request
 router.post('/joinreq', async (req, res, next) => {
     const { groupid, userid } = req.body
     const status = "pending"
@@ -161,6 +162,7 @@ router.patch('/reject/:reqid', async (req, res, next) => {
     const requestid = req.params.reqid
 
     try {
+        // updates request status from 'pending' to 'rejected'
         await pool.query(
             `UPDATE joinrequest SET status = 'rejected' WHERE requestid = $1`,
             [requestid]
@@ -178,10 +180,12 @@ router.patch('/accept', async (req, res, next) => {
     const { requestid, groupid, userid } = req.body
 
     try {
+        // updates request status from 'pending' to 'accepted'
         await pool.query(
             `UPDATE joinrequest SET status = 'accepted' WHERE requestid = $1`,
             [requestid]
         )
+        // inserts accepted user as a member of the group
         await pool.query(
             `INSERT INTO userGroup (userID, groupID, role) VALUES ($1, $2, 'member')`, [userid, groupid]
                 )
