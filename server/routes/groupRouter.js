@@ -20,7 +20,6 @@ router.get('/', (req, res, next) => {
         })
 })
 
-//KESKEN
 // router for fetching users groups
 router.get('/mygroups/:userid', (req, res, next) => {
     const userID = req.params.userid
@@ -96,6 +95,22 @@ router.get('/:id', (req, res, next) => {
         })
 })
 
+// router for getting pending join-requests
+router.get('/pending/:userid', (req, res, next) => {
+    const ownerid = req.params.userid
+
+    pool.query(`SELECT j.requestid, j.groupid, j.userid, g.groupname, u.nickname, j.createdat FROM joinRequest j
+        JOIN groups g ON g.groupid  = j.groupid
+        JOIN users u ON u.userid = j.userid
+        WHERE g.ownerid = $1 AND j.status = 'pending';`, [ownerid], (err, result) => {
+            if (err) {
+                console.error('Error while fetching requests: ', err)
+                return next(err)
+            }
+            res.json(result.rows)
+        })
+})
+
 // router for joining request
 router.post('/joinreq', async (req, res, next) => {
     const { groupid, userid } = req.body
@@ -127,9 +142,6 @@ router.post('/joinreq', async (req, res, next) => {
                 `INSERT INTO joinRequest (groupID, userID, status) VALUES ($1,$2,$3)`,
                 [groupid, userid, status]
                 )
-                await pool.query(
-                    `INSERT INTO userGroup (userID, groupID, role) VALUES ($1, $2, 'member')`, [userid, groupid]
-                )
                 return res.status(201).json({ message: "Join request sent" })
             }
         } else {
@@ -142,6 +154,42 @@ router.post('/joinreq', async (req, res, next) => {
         res.status(500).json({ error: "Database error" })
     }
     
+})
+
+// router for rejecting join request
+router.patch('/reject/:reqid', async (req, res, next) => {
+    const requestid = req.params.reqid
+
+    try {
+        await pool.query(
+            `UPDATE joinrequest SET status = 'rejected' WHERE requestid = $1`,
+            [requestid]
+        )
+        res.status(200).json({ message: "request rejected" })
+    } catch (err) {
+        console.error('Error while updating status to rejected:', err)
+        next(err)
+    }
+})
+
+// router for accepting join request
+router.patch('/accept', async (req, res, next) => {
+
+    const { requestid, groupid, userid } = req.body
+
+    try {
+        await pool.query(
+            `UPDATE joinrequest SET status = 'accepted' WHERE requestid = $1`,
+            [requestid]
+        )
+        await pool.query(
+            `INSERT INTO userGroup (userID, groupID, role) VALUES ($1, $2, 'member')`, [userid, groupid]
+                )
+        res.status(200).json({ message: "request accepted, new member added to the group" })
+    } catch (err) {
+        console.error('Error while updating status to accepted:', err)
+        next(err)
+    }
 })
 
 // router for deleting a group

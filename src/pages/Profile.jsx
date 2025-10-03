@@ -3,13 +3,15 @@ import Header from '../components/Header'
 import { UserContext } from '../context/UserContext'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'  // to notify user after login or signup
-import 'react-toastify/dist/ReactToastify.css';
+import 'react-toastify/dist/ReactToastify.css'
+import { rejectRequest, acceptRequest } from '../components/GroupFunctions'
 
 export default function Profile() {
   const { user, deleteAccount } = useContext(UserContext)
   const navigate = useNavigate()
   const [favourites, setFavourites] = useState(null)
   const [myGroups, setMyGroups] = useState([])
+  const [myRequests, setMyRequests] = useState([])
 
   const isLoggedIn = sessionStorage.getItem('user')
 
@@ -26,6 +28,7 @@ export default function Profile() {
     .catch(err => console.error(err))
   }, [userID])
 
+  // Fetches user's groups on his/hers Profile page
   useEffect(() => {
     if(!userID) return  // does not fetch if user is not found
     fetch(`${import.meta.env.VITE_API_URL}/groups/mygroups/${userID}`)
@@ -33,6 +36,16 @@ export default function Profile() {
     .then(data => setMyGroups(data))  // set favourites with useState
     .catch(err => console.error(err))
   }, [userID])
+
+  // Fetches user's group requests on his/hers Profile page
+  useEffect(() => {
+    if(!userID) return  // does not fetch if user is not found
+    fetch(`${import.meta.env.VITE_API_URL}/groups/pending/${userID}`)
+    .then(res => res.json())
+    .then(data => setMyRequests(data))  // set favourites with useState
+    .catch(err => console.error(err))
+  }, [userID])
+
 
   const handleDeleteAccount = async () => {
     const userFromStorage = JSON.parse(sessionStorage.getItem('user'))
@@ -149,6 +162,21 @@ export default function Profile() {
               ))}
             </ul>
           </div>
+          {myRequests.length > 0 && 
+          <div id="myrequests">
+            <h1>Group requests</h1>
+            <ul className='list-unstyled'>
+              {myRequests.map((request) => (
+                <li key={request.requestid} className='mb-3'>
+                  <h5>{request.groupname}</h5>
+                  <p>Made request: {request.nickname}</p>
+                  <p>Request sent: {new Date(request.createdat).toLocaleDateString('fi-FI')}</p>
+                  <button onClick={() => {acceptRequest(request.requestid, request.groupid, request.userid)}}>Accept</button>
+                  <button onClick={() =>{rejectRequest(request.requestid)}}>Reject</button>
+                </li>
+              ))}
+            </ul>
+          </div>}
         </div>
       )}
 

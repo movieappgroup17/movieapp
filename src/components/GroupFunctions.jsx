@@ -28,4 +28,30 @@ const sendJoinReq = async (groupid, userid) => {
         
     }
 
-    export { sendJoinReq }
+    const rejectRequest = async (requestid) => {
+        try {
+            const response = await axios.patch(`${import.meta.env.VITE_API_URL}/groups/reject/${requestid}`)
+            toast.success('You have rejected group request')
+            return response.data
+        } catch (err) {
+            console.error(err)
+            toast('Error rejecting group request')
+        }
+    }
+
+    const acceptRequest = async (requestid, groupid, userid) => {
+        try {
+            const response = await axios.patch(`${import.meta.env.VITE_API_URL}/groups/accept`, {
+                requestid,
+                groupid,
+                userid
+            })
+            toast.success('You have accepted group request')
+            return response.data
+        } catch (err) {
+            console.error(err)
+            toast('Error accepting group request')
+        }
+    }
+
+    export { sendJoinReq, rejectRequest, acceptRequest }
