@@ -19,6 +19,26 @@ export default function Profile() {
   const userFromSessionStorage = JSON.parse(sessionStorage.getItem('user'))
   const userID = userFromSessionStorage?.userid // store in variable if found
 
+  // function to fetch user's groups and group requests
+  const fetchGroupsAndRequests = async () => {
+
+    if(!userID) return  // does not fetch if user is not found
+
+    try {
+      // Fetches user's groups on his/hers Profile page
+      const groupRes = await fetch(`${import.meta.env.VITE_API_URL}/groups/mygroups/${userID}`)
+      const groupsData = await groupRes.json()
+      setMyGroups(groupsData)
+
+      // Fetches user's group requests on his/hers Profile page
+      const requestRes = await fetch(`${import.meta.env.VITE_API_URL}/groups/pending/${userID}`)
+      const requestData = await requestRes.json()
+      setMyRequests(requestData)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   // Fetches user's favourite list on his/hers Profile page
   useEffect(() => {
     if(!userID) return  // does not fetch if user is not found
@@ -28,22 +48,9 @@ export default function Profile() {
     .catch(err => console.error(err))
   }, [userID])
 
-  // Fetches user's groups on his/hers Profile page
+  // Fetches groups and request when first uploading page
   useEffect(() => {
-    if(!userID) return  // does not fetch if user is not found
-    fetch(`${import.meta.env.VITE_API_URL}/groups/mygroups/${userID}`)
-    .then(res => res.json())
-    .then(data => setMyGroups(data))  // set favourites with useState
-    .catch(err => console.error(err))
-  }, [userID])
-
-  // Fetches user's group requests on his/hers Profile page
-  useEffect(() => {
-    if(!userID) return  // does not fetch if user is not found
-    fetch(`${import.meta.env.VITE_API_URL}/groups/pending/${userID}`)
-    .then(res => res.json())
-    .then(data => setMyRequests(data))  // set favourites with useState
-    .catch(err => console.error(err))
+    fetchGroupsAndRequests()
   }, [userID])
 
 
@@ -79,6 +86,30 @@ export default function Profile() {
 
   // shows user the page is trying to fetch favourites
   if (!favourites) return <p>Fetching favourites...</p>
+
+  // function to handle request approval
+  const handleAcceptRequest = async (requestid, groupid, userid) => {
+  try {
+    await acceptRequest(requestid, groupid, userid);
+    toast.success("Request accepted!");
+    fetchGroupsAndRequests(); // updates lists on page
+  } catch (err) {
+    console.error(err);
+    toast.error("Error accepting request");
+  }
+  }
+
+  // function to handle request rejection
+  const handleRejectRequest = async (requestid) => {
+  try {
+    await rejectRequest(requestid);
+    toast.info("Request rejected!");
+    fetchGroupsAndRequests(); // update lists on page
+  } catch (err) {
+    console.error(err);
+    toast.error("Error rejecting request");
+  }
+  }
 
   return (
   <>
@@ -171,8 +202,8 @@ export default function Profile() {
                   <h5>{request.groupname}</h5>
                   <p>Made request: {request.nickname}</p>
                   <p>Request sent: {new Date(request.createdat).toLocaleDateString('fi-FI')}</p>
-                  <button onClick={() => {acceptRequest(request.requestid, request.groupid, request.userid)}}>Accept</button>
-                  <button onClick={() =>{rejectRequest(request.requestid)}}>Reject</button>
+                  <button onClick={() => {handleAcceptRequest(request.requestid, request.groupid, request.userid)}}>Accept</button>
+                  <button onClick={() =>{handleRejectRequest(request.requestid)}}>Reject</button>
                 </li>
               ))}
             </ul>
