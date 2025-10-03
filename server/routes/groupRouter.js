@@ -25,12 +25,12 @@ router.get('/', (req, res, next) => {
 router.get('/mygroups/:userid', (req, res, next) => {
     const userID = req.params.userid
     pool.query(`
-        SELECT g.groupid, g.groupname, g.description, g.ownerid, u.nickname as owner
+        SELECT g.groupid, g.groupname, g.description, g.ownerid, ug.role, u.nickname as owner
         FROM groups g
         JOIN users u ON g.ownerid = u.userid
         JOIN userGroup ug ON ug.groupID = g.groupID
         WHERE ug.userID = $1
-        ORDER BY g.groupid DESC
+        ORDER BY ug.role DESC
         `, [userID], (err, result) => {
             if (err) {
                 console.error('Error while fetching groups: ', err)

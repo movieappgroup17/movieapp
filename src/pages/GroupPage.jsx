@@ -55,7 +55,7 @@ export default function GroupPage() {
                 {isLoggedIn && (
                     <>
                         <button onClick={handleDeleteGroup}>Delete this group</button>
-                        <button onClick={() => navigate('/groups')}>Go back</button>
+                        <button onClick={() => navigate('/groups')}>Back to groups</button>
                     </>
                 )}
             </div>

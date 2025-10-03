@@ -9,7 +9,7 @@ export default function Profile() {
   const { user, deleteAccount } = useContext(UserContext)
   const navigate = useNavigate()
   const [favourites, setFavourites] = useState(null)
-  const [myGroups, setMyGroups] = useState(null)
+  const [myGroups, setMyGroups] = useState([])
 
   const isLoggedIn = sessionStorage.getItem('user')
 
@@ -26,10 +26,13 @@ export default function Profile() {
     .catch(err => console.error(err))
   }, [userID])
 
-  /*useEffect(() => {
+  useEffect(() => {
     if(!userID) return  // does not fetch if user is not found
-    fetch()
-  })*/
+    fetch(`${import.meta.env.VITE_API_URL}/groups/mygroups/${userID}`)
+    .then(res => res.json())
+    .then(data => setMyGroups(data))  // set favourites with useState
+    .catch(err => console.error(err))
+  }, [userID])
 
   const handleDeleteAccount = async () => {
     const userFromStorage = JSON.parse(sessionStorage.getItem('user'))
@@ -130,6 +133,25 @@ export default function Profile() {
           </div>
         </div>
       )}
+
+      {myGroups.length === 0 ? (
+        <p>You don't have groups yet</p>
+      ) : (
+        <div id="mygroups" className='row'>
+          <div id="grouplist" className='col-md-4'>
+            <h1>My groups</h1>
+            <ul className='list-unstyled'>
+              {myGroups.map((group) => (
+                <li key={group.groupid} className='mb-3'>
+                  <h5 onClick={() => navigate(`/groups/${group.groupid}`)}>{group.groupname}</h5>
+                  <p>My role: {group.role}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+
       {isLoggedIn && (
             <div className="col-md-2 d-flex align-items-start justify-content-end">
               <button
