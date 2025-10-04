@@ -76,13 +76,15 @@ router.post('/signin', (req, res, next) =>{
                 return next(error)
             }
 
-            // create token for the user
-            //const token = sign({user: dbUser.email}, process.env.JWT_SECRET)
-            const token = sign(
-                { id: dbUser.userid, email: dbUser.email },
-                process.env.JWT_SECRET
-              )
-            res.status(200).json({
+            
+// create token for the user
+            const token = sign({user: dbUser.email}, process.env.JWT_SECRET, {expiresIn: '15m'})
+            // set Authorization-header to response
+            res
+                .header('Access-Control-Expose-Headers','Authorization')    // Needed to allow the front to read header
+                .header('Authorization','Bearer ' + token)  // Add token to response-header
+                .status(200)
+                .json({
                 userid: dbUser.userid,
                 email: dbUser.email,
                 nickname: dbUser.nickname,

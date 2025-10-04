@@ -9,32 +9,13 @@ const router = express.Router()
 router.post("/", auth, async (req, res) => {
     try {
         const userID = req.user?.id ?? req.user?.userID
-        if (!userID) {
-            return res.status(401).json({ error: "No userID in token" })}
+        //if (!userID) {
+            //return res.status(401).json({ error: "No userID in token" })}
 
         const { movieID, title } = req.body || {}
         if (!Number.isFinite(Number(movieID)) || !title?.trim()) {
             return res.status(400).json({ error: "movieId and title required" })
         }
-
-        console.log ('routerissa: ', userID)
-/* 
-        const existing = await pool.query(
-            "SELECT * FROM favourites WHERE movieID = $1",
-            [movieID]
-          );
-      
-          if (existing.rows.length > 0) {
-            return ((res.json(existing.rows[0])))
-          } */
-
-        // 1/3 Lisää movie-tauluun 
-        await pool.query(
-            `INSERT INTO movie (movieID, title) 
-            VALUES ($1, $2) 
-            ON CONFLICT (movieID) DO UPDATE SET title = EXCLUDED.title;`,
-            [movieID, title.trim()]
-        )
 
         //2/3 Hakee olemassa olevan listID tai luo uuden 
         let listID
@@ -75,7 +56,7 @@ router.get("/favourites", auth, async (req, res) => {
     try {
         const userID = req.user.id
         const { rows } = await pool.query(
-            `SELECT m.title  
+            `SELECT m.title, m.movieid  
         FROM favourites f  
         JOIN favourite_list l ON f.listID = l.listID 
         JOIN movie m ON f.movieID = m.movieID 

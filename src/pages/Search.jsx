@@ -7,6 +7,7 @@ import './css/search.css'
 import ToggleFav from '../components/Favourites.jsx'
 import ReviewsList from '../components/ReviewsList.jsx'
 import { useNavigate } from "react-router-dom"
+import { useFavourites } from '../context/useFavourites.jsx'
 
 function Search() {
   const [results, setResults] = useState([])
@@ -15,6 +16,7 @@ function Search() {
   const [err, setErr] = useState(null)
   const [page, setPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
+  const { favourites, setFavourites, loadingFavs } = useFavourites()
   const navigate = useNavigate()
   
   const defaultFilters = {
@@ -24,6 +26,55 @@ function Search() {
     sort: "popularity.desc"
   }
   const [filters, setFilters] = useState(defaultFilters)
+
+  async function handleToggleMovieChoice(m) {
+    if (!m.id || movieIDs[m.id]) return // skip if already fetched
+        try {
+          const res = await fetch(`http://localhost:3001/movies/getOrCreate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              tmdbId: m.id,
+              title: m.title,
+              release_date: m.release_date,
+              overview: m.overview
+            })
+          })
+          const dbData = await res.json()
+          return dbData.movieid
+        } catch (err) {
+          console.error("Failed to get movieID for", m.id, err)
+        }
+    }
+
+  async function handleMovieChoice(m) {
+      if (!m.id || movieIDs[m.id]) return // skip if already fetched
+        try {
+          const res = await fetch(`http://localhost:3001/movies/getOrCreate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              tmdbId: m.id,
+              title: m.title,
+              release_date: m.release_date,
+              overview: m.overview
+            })
+          })
+          const dbData = await res.json()
+
+          if (dbData.movieid) {
+            navigate(`/review/${dbData.movieid}`, {
+              state: {
+                title: m.title,
+                poster: m.poster_path,
+                overview: m.overview
+              }
+            })
+          }
+        } catch (err) {
+          console.error("Failed to get movieID for", m.id, err)
+        }
+    }
 
   async function runSearch(newFilters, newPage = 1) {
     setFilters (newFilters)
@@ -55,30 +106,6 @@ function Search() {
       setResults(data?.results ?? [])
       setPageCount(data?.total_pages ?? 0)
       setPage (newPage)
-
-  data?.results?.forEach(async (m) => {
-  if (!m.id || movieIDs[m.id]) return // skip if already fetched
-  try {
-    const res = await fetch(`http://localhost:3001/movies/getOrCreate`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        tmdbId: m.id,
-        title: m.title,
-        release_date: m.release_date,
-        overview: m.overview
-      })
-    })
-    const dbData = await res.json()
-
-    if (dbData.movieid) {
-      setMovieIDs(prev => ({ ...prev, [m.id]: dbData.movieid }))
-    } 
-  } catch (err) {
-    console.error("Failed to get movieID for", m.id, err)
-  }
-})
-
     } catch (e) {
       setErr(e);
     } finally {
@@ -108,24 +135,16 @@ function Search() {
             <div id="movieTitle">{m.title}</div>
             <div>{m.release_date}</div>
             <div id="movieDescription"> {m.overview && <p>{m.overview}</p>}</div>
-            <ToggleFav movie={{ id: m.id, title: m.title }} />
-        {movieIDs[m.id] ? (
-        <button onClick={() => navigate(`/review/${movieIDs[m.id]}`,
-         { state: {
-           title: m.title,
-            poster: m.poster_path,
-            overview : m.overview
-          }
-        })
-      }
-    >
-          Review this movie
-        </button>
-      ) : (
-        <>
-          <p>Loading...</p>
-        </>
-        )}  
+            <ToggleFav 
+              movie={m}
+              favourites={favourites}
+              setFavourites={setFavourites}
+              onEnsureInDb={handleToggleMovieChoice}
+              loadingFavs={loadingFavs}
+            />
+            <button onClick={() => handleMovieChoice(m)}>
+              Review this movie
+            </button>  
           </div>
         ))}
       </div>
