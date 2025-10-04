@@ -1,14 +1,13 @@
 import { useState, useEffect, useContext } from 'react'
 import Header from '../components/Header'
 import { useParams, useNavigate } from 'react-router-dom'
-import { UserContext } from '../context/UserContext'
 import { toast } from 'react-toastify'
+import { getGroupById, deleteGroup, checkIsGroupMember } from '../components/GroupFunctions'
 
 export default function GroupPage() {
     const [group, setGroup] = useState(null)
     const { id } = useParams()
     const navigate = useNavigate()
-    const { getGroupById, deleteGroup, checkIsGroupMember } = useContext(UserContext)
     const isLoggedIn = sessionStorage.getItem('user')
     
     useEffect(() => {

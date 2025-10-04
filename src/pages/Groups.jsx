@@ -4,14 +4,13 @@ import { UserContext } from '../context/UserContext'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import './css/Groups.css'
-import { sendJoinReq } from '../components/GroupFunctions'
+import { sendJoinReq, createGroup, getGroups, deleteGroup, checkIsGroupMember } from '../components/GroupFunctions'
 
 export default function Groups() {
   const [groups, setGroups] = useState([])
   const [groupname, setGroupname] = useState('')
   const [description, setDescription] = useState('')
   const navigate = useNavigate()
-  const { user, createGroup, getGroups, deleteGroup, checkIsGroupMember } = useContext(UserContext)
   const isLoggedIn = sessionStorage.getItem('user')
 
   useEffect(() => {
