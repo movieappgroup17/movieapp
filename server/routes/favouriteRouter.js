@@ -16,7 +16,7 @@ router.post("/", auth, async (req, res) => {
             return res.status(400).json({ error: "movieId and title required" })
         }
 
-        //2/3 Hakee olemassa olevan listID tai luo uuden 
+        // Hakee olemassa olevan listID tai luo uuden 
         let listID
         {const { rows } = await pool.query(
                 `SELECT listID FROM favourite_list WHERE userID = $1 LIMIT 1;`,
@@ -35,7 +35,7 @@ router.post("/", auth, async (req, res) => {
             listID = rows[0].listid
         }
 
-        // 3/3 Lisää favouriteseihin 
+        // Lisää favouriteseihin 
         await pool.query(
             `INSERT INTO favourites (listID, movieID) VALUES ($1, $2)
             ON CONFLICT (listID, movieID) DO NOTHING RETURNING movieID`,
@@ -73,8 +73,10 @@ router.get("/favourites", auth, async (req, res) => {
 
 // Poista suosikki 
 router.delete('/:movieID', auth, async (req, res) => {
+    console.log("yritetään deleteä")
     try {
-        const userID = req.user.id
+        const userID = Number(req.query.userID)
+        console.log("userid on ", userID)
         const movieID = Number(req.params.movieID)
         if (!Number.isFinite(movieID)) {
             return res.status(400).json({ error: 'Invalid movieID' })
@@ -85,6 +87,7 @@ router.delete('/:movieID', auth, async (req, res) => {
             [userID]
         )
         const listID = rows[0]?.listid
+        console.log(listID)
         if (!listID) {
             return res.status(204).end()
         }
@@ -93,6 +96,7 @@ router.delete('/:movieID', auth, async (req, res) => {
             `DELETE FROM favourites WHERE listID = $1 AND movieID = $2;`,
             [listID, movieID]
         )
+        console.log('Deleted rows:', result.rowCount)
         return res.json({ deleted: result.rowCount > 0 })
     } catch (e) {
         console.error(e)

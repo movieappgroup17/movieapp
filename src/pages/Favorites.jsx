@@ -14,7 +14,7 @@ export default function Favorites() {
     fetch(`${import.meta.env.VITE_API_URL}/favourites/publicLists`)
     .then(res => res.json())
     .then(data => {
-      console.log("Fetched lists:", data)
+      //console.log("Fetched lists:", data)
       setFavouritelists(data)
 
     })
@@ -44,16 +44,16 @@ export default function Favorites() {
               </div>
               <ol className="list-group list-group-numbered">
                 {list.movies?.map(movie => (
-                  <li key={movie.movieID} className="list-group-item d-flex justify-content-between align-items-start">
-                    <div className="ms-2 me-auto">
+                  <li key={movie.movieID} className="list-group-item d-flex justify-content-between align-items-center">
+                    <div className="flex-grow-1 d-flex justify-content-center align-items-center gap-2">
                       <div className="fw-bold">{movie.title}</div>
                       <img
-                      src={movie.imageURL || "https://placehold.co/100x150?text=No+Image"}
+                    src={`https://image.tmdb.org/t/p/w200${movie.imageURL}` || "https://placehold.co/100x150?text=No+Image"}
                       alt={movie.title}
                       style={{ width: "100px" }}
                     />
+                      
                     </div>
-                    <span className="badge text-bg-primary rounded-pill">{movie.genre || "Unknown genre"}</span>
                   </li>
                 ))}
               </ol>

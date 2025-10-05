@@ -27,9 +27,12 @@ function Search() {
   }
   const [filters, setFilters] = useState(defaultFilters)
 
+  // function to handle movie choice with Toggle -button
   async function handleToggleMovieChoice(m) {
     if (!m.id || movieIDs[m.id]) return // skip if already fetched
         try {
+          // check if movie is found in database and return it
+          // if it is not in database, insert it to database 
           const res = await fetch(`http://localhost:3001/movies/getOrCreate`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -37,7 +40,9 @@ function Search() {
               tmdbId: m.id,
               title: m.title,
               release_date: m.release_date,
-              overview: m.overview
+              overview: m.overview,
+              imageURL: m.poster_path
+
             })
           })
           const dbData = await res.json()
@@ -47,9 +52,12 @@ function Search() {
         }
     }
 
+    // function to handle movie choice in review -button
   async function handleMovieChoice(m) {
       if (!m.id || movieIDs[m.id]) return // skip if already fetched
         try {
+          // check if movie is found in database and return it
+          // if it is not in database, insert it to database 
           const res = await fetch(`http://localhost:3001/movies/getOrCreate`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -57,11 +65,13 @@ function Search() {
               tmdbId: m.id,
               title: m.title,
               release_date: m.release_date,
-              overview: m.overview
+              overview: m.overview,
+              imageURL: m.poster_path
             })
           })
           const dbData = await res.json()
 
+          // after getting movieid, go to review form to give a review
           if (dbData.movieid) {
             navigate(`/review/${dbData.movieid}`, {
               state: {

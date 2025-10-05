@@ -40,18 +40,28 @@ export default function Profile() {
   }
 
   // Fetches user's favourite list on his/hers Profile page
+  const fetchFavourites = async () => {
+  if (!userID) return
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/favourites/user/${userID}`)
+    const data = await res.json()
+    setFavourites(data)
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+  // fetch favourites when userID changes
   useEffect(() => {
-    if(!userID) return  // does not fetch if user is not found
-    fetch(`${import.meta.env.VITE_API_URL}/favourites/user/${userID}`)
-    .then(res => res.json())
-    .then(data => setFavourites(data))  // set favourites with useState
-    .catch(err => console.error(err))
+    fetchFavourites()
   }, [userID])
 
   // Fetches groups and request when first uploading page
   useEffect(() => {
     fetchGroupsAndRequests()
   }, [userID])
+
+  
 
 
   const handleDeleteAccount = async () => {
@@ -60,6 +70,32 @@ export default function Profile() {
     if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
         await deleteAccount(userFromStorage.token)
         navigate('/signin')
+    }
+  }
+
+  // function to delete movie from favouritelist
+  const deleteFavourite = async (movieID) => {
+    console.log(movieID)
+    console.log(userFromSessionStorage.token)
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/favourites/${movieID}?userID=${userFromSessionStorage.userid}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${userFromSessionStorage.token}`
+        },
+        body: JSON.stringify({ userID: userFromSessionStorage.userid })
+      })
+      console.log(res.status, res.ok)
+      // fetch favourites again after deletion
+      if(res.ok) {
+        fetchFavourites(setFavourites(prev => ({
+        ...prev,
+        movies: prev.movies.filter(m => m.movieID !== movieID)
+      })))
+      }
+
+    } catch (err) {
+      console.error(err)
     }
   }
 
@@ -124,18 +160,19 @@ export default function Profile() {
             <h1>My favourites</h1>
             <ul className="list-unstyled">
               {favourites.movies?.map((movie) => (
-                <li key={movie.movieID} className="mb-3">
-                  <h5>{movie.title}</h5>
+                <li key={movie.movieID} className="mb-3 d-flex align-items-center gap-2">
                   <img
                     src={
-                      movie.imageURL ||
+                      `https://image.tmdb.org/t/p/w200${movie.imageURL}` ||
                       "https://placehold.co/100x150?text=No+Image"
                     }
                     alt={movie.title}
                     className="img-thumbnail mb-2"
                     style={{ width: "100px" }}
                   />
-                  <p>{movie.genre || "Unknown genre"}</p>
+                  <h5>{movie.title}</h5>
+                  <button onClick={() => deleteFavourite(movie.movieID)}>Delete</button>
+                  
                 </li>
               ))}
             </ul>

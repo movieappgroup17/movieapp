@@ -8,28 +8,31 @@ export default function ToggleFav({ movie, favourites, setFavourites, onEnsureIn
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
-  // check
+  // Everytime favorites change, this checks if a movie is in favourites
   useEffect(() => {
-    if (!favourites) return
-    console.log(favourites.movies.map(m => m.movieID))
-    setInFav(favourites.movies.some(m => m.movieID === movie.id))
+    if (!favourites) return 
+    //console.log(favourites?.movies?.map(m => m.movieID))
+    setInFav(favourites?.movies?.some(m => m.movieID === movie.id))
   }, [favourites, movie.id])
 
+  // function to add or remove from favourites
   async function toggleFav() {
     setLoading(true)
     setError("")
 
     try {
       const token = user.token
-      if (!token) throw new error("Not logged in")
+      if (!token) throw new Error("Not logged in")
 
+      // If prop has been given, this checks if the movie is in database
       let dbMovieId = movie.id
       if (onEnsureInDb) {
         dbMovieId = await onEnsureInDb(movie)
       }
 
-
+    
       if (!inFav) {
+        // Add to favourites
         const resp = await fetch("http://localhost:3001/favourites", {
           method: "POST",
           headers: {
@@ -40,17 +43,19 @@ export default function ToggleFav({ movie, favourites, setFavourites, onEnsureIn
         })
 
         if (!resp.ok) throw new Error("Add failed / already in favourites")
+        
+        // update useState
         setInFav(true)
         setFavourites(prev => ({  // update favourite list
           ...prev, movies: [...prev.movies, { movieID: dbMovieId, title: movie.title }]
         })) 
-        toast.success("Added to favourites")
+        toast.success("Added to favourites")  // notify user about successful addition
       } else {
-        const resp = await fetch(`http://localhost:3001/favourites/${movie.id}`, {
+        const resp = await fetch(`http://localhost:3001/favourites/${movie.id}?userID=${user.userid}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
-          },
+          }
         });
         if (!resp.ok && resp.status !== 204) throw new Error("Delete failed")
         setInFav(false)
@@ -63,10 +68,11 @@ export default function ToggleFav({ movie, favourites, setFavourites, onEnsureIn
     } catch (e) {
       setError(e.message)
     } finally {
-      setLoading(false)
+      setLoading(false) // remove loading state
     }
   }
 
+  // if favourites are still loading, show "Loading..."
   if (loadingFavs) return <div>Loading...</div>
 
 

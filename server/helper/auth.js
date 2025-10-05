@@ -23,11 +23,13 @@ const auth = (req, res, next) => {
         // store user to request object --> allows other components to use this information
         req.user = decoded.user || decoded
 
+        console.log(req.user)
         // create new access token when requested protected route
         // prolongues session --> user does not have to sign in so often
         const new_access_token = sign({user: req.user}, process.env.JWT_SECRET, {expiresIn: '15m'})
         res.header('Access-Control-Expose-Headers','Authorization') // enables sending headers to the front (CORS normally blocks these)
         res.header('Authorization','Bearer ' + new_access_token)    // set new token to header
+        console.log("auth onnistui")
         next()
     } catch (error) {
         console.error('Auth error:', error.message)
