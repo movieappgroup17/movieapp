@@ -5,6 +5,7 @@ import userRouter from './routes/userRouter.js'
 import reviewRouter from './routes/reviewRouter.js'
 import movieRouter from './routes/movieRouter.js'
 import favouriteRouter from './routes/favouriteRouter.js'
+import groupRouter from './routes/groupRouter.js'
 
 const port = process.env.PORT || 3001
 
@@ -13,10 +14,12 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+
 app.use("/movies", movieRouter)
 app.use("/reviews", reviewRouter)
 app.use('/user', userRouter)
 app.use('/favourites', favouriteRouter)
+app.use('/groups', groupRouter)
 
 app.use((err, req, res, next) => {
   const statusCode = err.status || 500

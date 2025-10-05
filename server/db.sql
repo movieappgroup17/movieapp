@@ -1,4 +1,4 @@
-DROP TABLE if exists userGroup, groups, favourites, favourite_list, review, movie, users;
+DROP TABLE if exists group_movies, userGroup, groups, favourites, favourite_list, review, movie, users;
 
 
 CREATE TABLE users (
@@ -56,4 +56,14 @@ CREATE TABLE userGroup (
     PRIMARY KEY (userID, groupID),
     FOREIGN KEY (userID) REFERENCES users(userID),
     FOREIGN KEY (groupID) REFERENCES groups(groupID)
+);
+
+CREATE TABLE group_movies (
+    id SERIAL PRIMARY KEY,
+    groupID INT NOT NULL REFERENCES groups(groupID) ON DELETE CASCADE,
+    movieID INT NOT NULL REFERENCES movie(movieID) ON DELETE CASCADE,
+    addedBy INT NOT NULL REFERENCES users(userID) ON DELETE CASCADE,
+    showtime TIMESTAMP NULL,
+    theatre VARCHAR(255) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
