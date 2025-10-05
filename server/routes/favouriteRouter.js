@@ -1,8 +1,109 @@
 import { pool } from '../helper/db.js'
 import express from 'express'
+import { auth } from '../helper/auth.js'
 
 
 const router = express.Router()
+
+// Lisää suosikki 
+router.post("/", auth, async (req, res) => {
+    try {
+
+        const { movieID, title, userID } = req.body || {}
+        console.log(userID)
+
+        if (!Number.isFinite(Number(movieID)) || !title?.trim()) {
+            return res.status(400).json({ error: "movieId and title required" })
+        }
+
+        // Hakee olemassa olevan listID tai luo uuden 
+        let listID
+        {const { rows } = await pool.query(
+                `SELECT listID FROM favourite_list WHERE userID = $1 LIMIT 1;`,
+                [userID]
+            )
+            console.log("DEBUG: rows from SELECT", rows)
+            listID = rows[0]?.listid
+        }
+
+        if (!listID) {
+            const { rows } = await pool.query(
+                `INSERT INTO favourite_list (userID) VALUES ($1) RETURNING listID;`,
+                [userID]
+            )
+            console.log("DEBUG: rows from INSERT", rows)
+            listID = rows[0].listid
+        }
+
+        // Lisää favouriteseihin 
+        await pool.query(
+            `INSERT INTO favourites (listID, movieID) VALUES ($1, $2)
+            ON CONFLICT (listID, movieID) DO NOTHING RETURNING movieID`,
+            [listID, movieID]
+        )
+
+        return res.status(201).json({ ok: true, movieID, title })
+    } catch (e) {
+        console.error(e)
+        return res.status(500).json({ ok: false, error: "Failed to add favourite" })
+    }
+})
+
+
+// router hakee omat suosikit 
+router.get("/favourites", auth, async (req, res) => {
+    try {
+        const userID = req.user.id
+        const { rows } = await pool.query(
+            `SELECT m.title, m.movieid  
+        FROM favourites f  
+        JOIN favourite_list l ON f.listID = l.listID 
+        JOIN movie m ON f.movieID = m.movieID 
+        WHERE l.userID = $1 
+         ORDER BY m.title ASC;`,
+            [userID]
+        );
+       return res.json(rows)
+    } catch (e) {
+        console.error(e)
+        return res.status(500).json({ error: "Failed to fetch favourites" })
+    }
+})
+
+
+// Poista suosikki 
+router.delete('/:movieID', auth, async (req, res) => {
+    console.log("yritetään deleteä")
+    try {
+        const userID = Number(req.query.userID)
+        console.log("userid on ", userID)
+        const movieID = Number(req.params.movieID)
+        if (!Number.isFinite(movieID)) {
+            return res.status(400).json({ error: 'Invalid movieID' })
+        }
+
+        const { rows } = await pool.query(
+            `SELECT listID FROM favourite_list WHERE userID = $1 LIMIT 1;`,
+            [userID]
+        )
+        const listID = rows[0]?.listid
+        console.log(listID)
+        if (!listID) {
+            return res.status(204).end()
+        }
+
+        const result = await pool.query(
+            `DELETE FROM favourites WHERE listID = $1 AND movieID = $2;`,
+            [listID, movieID]
+        )
+        console.log('Deleted rows:', result.rowCount)
+        return res.json({ deleted: result.rowCount > 0 })
+    } catch (e) {
+        console.error(e)
+        return res.status(500).json({ error: 'Failed to delete favourite' })
+    }
+})
+
 
 // ROUTER to shows list of favourite movies on Profile -page
 router.get("/user/:userID", async (req, res) => {
@@ -35,13 +136,13 @@ router.get("/user/:userID", async (req, res) => {
 
         // Build an array of movies
         const movies = result.rows
-        .filter(r => r.movieid !== null)
-        .map(r => ({
-            movieID: r.movieid,
-            title: r.title,
-            imageURL: r.imageurl,
-            genre: r.genre
-        }))
+            .filter(r => r.movieid !== null)
+            .map(r => ({
+                movieID: r.movieid,
+                title: r.title,
+                imageURL: r.imageurl,
+                genre: r.genre
+            }))
 
         // Final JSON response to the frontend
         res.json({
@@ -52,7 +153,7 @@ router.get("/user/:userID", async (req, res) => {
         })
     } catch (err) {
         console.error(err.message)
-        res.status(500).json({ error: "Server error"})
+        res.status(500).json({ error: "Server error" })
     }
 })
 
@@ -87,7 +188,7 @@ router.get('/publicLists', async (req, res) => {
         // Grouping result rows by listID
         const listsMap = {}
         result.rows.forEach(row => {
-            if(!listsMap[row.listid]) {
+            if (!listsMap[row.listid]) {
                 listsMap[row.listid] = {
                     listID: row.listid,
                     nickname: row.nickname,
@@ -112,8 +213,8 @@ router.get('/publicLists', async (req, res) => {
         // Final JSON response to the frontend
         res.json(lists)
     } catch (err) {
-        console.error(err.message )
-        res.status(500).json({ error: "Server error"})
+        console.error(err.message)
+        res.status(500).json({ error: "Server error" })
     }
 })
 
@@ -121,9 +222,9 @@ router.get('/publicLists', async (req, res) => {
 
 // ROUTER to fetch a spesific list of favourite movies on SharedFavouritelist -page
 
- router.get('/share/:shareToken', async (req, res) => {
+router.get('/share/:shareToken', async (req, res) => {
     const { shareToken } = req.params
-    
+
     try {
         // Fetch favourite list from database by share_token
         const result = await pool.query(
@@ -141,30 +242,30 @@ router.get('/publicLists', async (req, res) => {
             WHERE fl.share_token = $1`, [shareToken]
         )
 
-        if(!result || result.rows.length === 0) return res.status(404).json({ error: 'Not found' })
+        if (!result || result.rows.length === 0) return res.status(404).json({ error: 'Not found' })
 
         const { listid, nickname, share_token } = result.rows[0]
 
         // Build an array of movies
         const movies = result.rows
-        .filter(r => r.movieid !== null)
-        .map(r => ({
-            movieID: r.movieid,
-            title: r.title,
-            imageURL: r.imageurl,
-            genre: r.genre
-        }))
+            .filter(r => r.movieid !== null)
+            .map(r => ({
+                movieID: r.movieid,
+                title: r.title,
+                imageURL: r.imageurl,
+                genre: r.genre
+            }))
 
         // Final JSON response to the frontend
-            res.json({
-                listID: listid,
-                nickname,
-                share_token,
-                movies
-            })
+        res.json({
+            listID: listid,
+            nickname,
+            share_token,
+            movies
+        })
     } catch (err) {
         console.error(err.message)
-        res.status(500).json({ error: "Server error"})
+        res.status(500).json({ error: "Server error" })
     }
 })
 
@@ -197,6 +298,6 @@ router.put('/public/:listID', async (req, res) => {
         res.status(500).json({ error: "Server error" })
     }
 })
-    
+
 
 export default router

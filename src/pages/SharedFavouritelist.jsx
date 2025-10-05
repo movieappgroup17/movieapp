@@ -29,8 +29,7 @@ return (
                 {favourites.movies?.map(movie => (
                     <li key={movie.movieID}>
                         <h3>{movie.title}</h3>
-                        <img src={movie.imageURL || "https://placehold.co/100x150?text=No+Image"} alt={movie.title} />
-                        <p>{movie.genre || "Unknown genre"}</p>
+                        <img src={`https://image.tmdb.org/t/p/w200${movie.imageURL}` || "https://placehold.co/100x150?text=No+Image"} alt={movie.title} />
                     </li>
                 ))}
             </ul>

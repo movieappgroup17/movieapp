@@ -6,6 +6,7 @@ import reviewRouter from './routes/reviewRouter.js'
 import movieRouter from './routes/movieRouter.js'
 import favouriteRouter from './routes/favouriteRouter.js'
 import groupRouter from './routes/groupRouter.js'
+import authRouter from './routes/authRouter.js'
 
 const port = process.env.PORT || 3001
 
@@ -20,6 +21,7 @@ app.use("/reviews", reviewRouter)
 app.use('/user', userRouter)
 app.use('/favourites', favouriteRouter)
 app.use('/groups', groupRouter)
+app.use('/auth', authRouter)
 
 app.use((err, req, res, next) => {
   const statusCode = err.status || 500
@@ -30,6 +32,31 @@ app.use((err, req, res, next) => {
     }
   })
 })
+
+
+app.get("/favourites", async (req, res) => {
+  const result = await pool.query("SELECT * FROM favourites");
+  res.json(result.rows);
+})
+
+app.post("/favourites", async (req, res) => {
+  const { movieID } = req.body;
+  await pool.query(
+    "INSERT INTO favourites (movieID) VALUES ($1) ON CONFLICT DO NOTHING",
+    [movieID]
+  );
+  res.sendStatus(201);
+})
+
+app.delete("/favourites", async (req, res) => {
+  const { movieID } = req.body;
+  await pool.query(
+    "DELETE FROM favourites WHERE movieID = $1",
+    [movieID]
+  );
+  res.sendStatus(200);
+})
+
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)
