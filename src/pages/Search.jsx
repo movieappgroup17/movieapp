@@ -132,7 +132,8 @@ function Search() {
           tmdbId: movie.id,
           title: movie.title,
           release_date: movie.release_date,
-          overview: movie.overview
+          overview: movie.overview,
+          imageURL: movie.poster_path
         })
       })
       const dbMovie = await resMovie.json()
