@@ -36,7 +36,7 @@ export default function ToggleFav({ movie, favourites, setFavourites, onEnsureIn
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ movieID: movie.id, title: movie.title }),
+          body: JSON.stringify({ movieID: movie.id, title: movie.title, userID: user.userid }),
         })
 
         if (!resp.ok) throw new Error("Add failed / already in favourites")

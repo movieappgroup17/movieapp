@@ -8,11 +8,10 @@ const router = express.Router()
 // Lisää suosikki 
 router.post("/", auth, async (req, res) => {
     try {
-        const userID = req.user?.id ?? req.user?.userID
-        //if (!userID) {
-            //return res.status(401).json({ error: "No userID in token" })}
 
-        const { movieID, title } = req.body || {}
+        const { movieID, title, userID } = req.body || {}
+        console.log(userID)
+
         if (!Number.isFinite(Number(movieID)) || !title?.trim()) {
             return res.status(400).json({ error: "movieId and title required" })
         }
