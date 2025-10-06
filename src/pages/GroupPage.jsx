@@ -95,7 +95,7 @@ export default function GroupPage() {
       return
     }
     console.log(selectedArea)
-    const dateStr = `${currentDate.getDate().toString().padStart(2,'0')}.${(currentDate.getMonth()+1).toString().padStart(2,'0')}.${currentDate.getFullYear()}`
+    const dateStr = `${currentDate.getDate().toString().padStart(2, '0')}.${(currentDate.getMonth() + 1).toString().padStart(2, '0')}.${currentDate.getFullYear()}`
 
     try {
       const res = await fetch(`https://www.finnkino.fi/xml/Schedule/?area=${selectedArea}&dt=${dateStr}`)
@@ -128,6 +128,7 @@ export default function GroupPage() {
       navigate('/groups')
     }
   }
+
 
   const handleAddMovie = async () => {
     const userFromStorage = JSON.parse(sessionStorage.getItem('user'))
@@ -168,6 +169,7 @@ export default function GroupPage() {
           <>
             <button onClick={handleDeleteGroup}>Delete this group</button>
             <button onClick={() => navigate('/groups')}>Go back</button>
+            <GroupMembers groupID={id}/>
           </>
         )}
 
@@ -190,7 +192,7 @@ export default function GroupPage() {
                 <strong>{movie.title}</strong>
                 {movie.showtime && <> — {new Date(movie.showtime).toLocaleString()} @ {movie.theatre}</>}
                 <span> (added by {movie.added_by})</span>
-                
+
                 <div>
                   <button onClick={() => fetchShowTimesForMovie(movie.title)}>
                     Show Showtimes
@@ -202,7 +204,7 @@ export default function GroupPage() {
                   <ul>
                     {showTimes[movie.title].map((show, i) => (
                       <li key={i}>
-                        {show.dttmShowStart ? new Date(show.dttmShowStart).toLocaleTimeString('fi-FI', {hour:'2-digit', minute:'2-digit'}) : 'No time'} — {show.TheatreAuditorium || 'No auditorium'}
+                        {show.dttmShowStart ? new Date(show.dttmShowStart).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }) : 'No time'} — {show.TheatreAuditorium || 'No auditorium'}
                       </li>
                     ))}
                   </ul>
@@ -214,6 +216,122 @@ export default function GroupPage() {
           <p>No movies added yet</p>
         )}
       </div>
+    </>
+  )
+}
+function GroupMembers({ groupID }) {
+  const [ownerID, setOwnerID] = useState(null)
+  const [members, setMembers] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const navigate = useNavigate()
+
+const currentUser = JSON.parse(sessionStorage.getItem('user') || 'null')
+const currentUserID = String(currentUser?.userid ?? currentUser?.userID ?? currentUser?.id ?? '')
+
+  const showMembers = useCallback(async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const res = await fetch(`http://localhost:3001/groups/${groupID}/members`)
+      if (!res.ok) throw new Error(`Failed to fetch members: ${res.status}`)
+      const data = await res.json()
+      setOwnerID(data.ownerID)
+      setMembers(Array.isArray(data.members) ? data.members : [])
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setLoading(false)
+    }
+  }, [groupID])
+
+  useEffect(() => {
+    showMembers()
+  }, [showMembers])
+
+
+  const handleRemove = async (userID) => {
+    if (!window.confirm('Remove this member from the group?')) return
+    try {
+      const res = await fetch(`http://localhost:3001/groups/remove`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ groupid: groupID, userid: userID, ownerid: currentUserID })
+      })
+      if (!res.ok) {
+        let errJson = null
+        try { errJson = await res.json() } catch { }
+        throw new Error(errJson?.error || `Remove failed: ${res.status}`)
+      }
+      setMembers((prev) => prev.filter((m) => m.userID !== userID))
+    } catch (e) {
+      alert(e.message)
+    }
+  }
+
+  const handleLeave = async () => {
+    if (!window.confirm('Leave this group?')) return
+    try {
+      const res = await fetch(`http://localhost:3001/groups/leave`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ groupid: groupID, userid: currentUserID })
+      })
+      if (!res.ok) {
+        let errJson = null
+        try { errJson = await res.json() } catch { }
+        throw new Error(err?.error || `Leave failed: ${res.status}`)
+      }
+      setMembers((prev) => prev.filter((m) => m.userID !== currentUserID))
+      navigate('/groups')
+    } catch (e) {
+      alert(e.message)
+    }
+  }
+
+  const isOwner = ownerID != null && String(currentUserID) === String(ownerID)
+
+  if (loading) return <div>Loading members…</div>
+  if (error) return <div style={{ color: 'crimson' }}>Error: {error}</div>
+  console.log({ currentUserID, ownerID, members })
+
+
+
+  return (
+    <>
+      <div className="group-members">
+        <h3>Members</h3>
+        <button onClick={showMembers} aria-label="Refresh members">Refresh</button>
+      </div>
+
+      <ul className="member-list">
+        {members.map((m) => {
+          const isSelf = String(m.userID) === String(currentUserID)
+          const ownerRemovesUser = isOwner && !isSelf // owner cannot remove themselves
+          const memberLeaves = isSelf && !isOwner    // owner cannot leave
+
+          return (
+            <li key={m.userID} className="member-row">
+              <div className="info">
+                <span className="nickname">{m.nickname}</span>
+                {String(m.userID) === String(ownerID) && <span className="badge">owner</span>}
+                {m.role && String(m.userID) !== String(ownerID) && <span className="muted">({m.role})</span>}
+              </div>
+
+              <div className="actions">
+                {ownerRemovesUser && (
+                  <button onClick={() => handleRemove(m.userID)}>
+                    Remove from group
+                  </button>
+                )}
+                {memberLeaves && (
+                  <button onClick={handleLeave}> Leave the group</button>
+                )}
+              </div>
+            </li>
+          )
+        })}
+      </ul>
     </>
   )
 }
