@@ -99,7 +99,7 @@ router.post('/signin', (req, res, next) =>{
 // router for deleting user account
 router.delete('/', auth, async (req, res, next) => {
     try {
-        const email = req.user.user // get email from token
+        const email = req.user // get email from token
         console.log('deleten email: ', email)
 
         if (!email) {
