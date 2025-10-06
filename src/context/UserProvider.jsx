@@ -34,6 +34,9 @@ export default function UserProvider({ children }) {
                     toast.error('This email is already registered. Sign in or use other email.')
                 } else if (error.response.data.error === 'Nickname already taken') {
                         toast.error('This nickname is already taken. Choose another one.')
+                } else if (error.response.status === 400) { // password requirements are not met
+                    toast.error(error.response.data.error)
+                    toast.info('Please check the requirements below', { autoClose: 9000 })
                 } else {
                     toast.error(error.response.data.error)
                 }
