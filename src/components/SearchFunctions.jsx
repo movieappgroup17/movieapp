@@ -38,6 +38,7 @@ async function searchMoviesByText({ query, page = 1 }) {
         page,
     };
     const { data } = await api.get("/search/movie", { params });
+    console.log(data)
     return data;
 }
 
