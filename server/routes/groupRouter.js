@@ -128,13 +128,13 @@ router.post('/joinreq', async (req, res, next) => {
         if (hasRequest.rows.length === 0) {
 
             // check is request has been rejected
-            const rejected = await pool.query(`SELECT * FROM joinRequest WHERE userID = $1 AND groupID = $2 AND status IN ('rejected')`, [userid, groupid])
-
+            const rejected = await pool.query(`SELECT * FROM joinRequest WHERE userID = $1 AND groupID = $2 AND status = 'rejected'`, [userid, groupid])
+            
             // if request has been rejected, send new request by updating status to 'pending'
-            if (rejected.rows.length > 0) {
+            if (rejected.rows.length === 1) {
                 await pool.query(
-                    `UPDATE joinRequest SET status = $1`,
-                    [status]
+                    `UPDATE joinRequest SET status = $1 WHERE requestid = $2`,
+                    [status, rejected.rows[0].requestid]
                 )
                 return res.status(201).json({ message: "Join request sent" })
             } else {
@@ -213,6 +213,13 @@ router.delete('/remove', async (req, res, next) => {
         }
         await pool.query(
             `DELETE FROM usergroup WHERE userID = $1 AND groupID = $2`,
+            [userid, groupid]
+        )
+
+    
+        // updates request status from 'accepted' to 'null'
+        await pool.query(
+            `UPDATE joinrequest SET status = 'rejected' WHERE userID = $1 AND groupID = $2`,
             [userid, groupid]
         )
         res.status(200).json({ message: 'Member removed from group' })
