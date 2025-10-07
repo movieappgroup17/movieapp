@@ -1,4 +1,5 @@
 import { expect } from "chai"
+import axios from "axios"
 import { initializeTestDb, insertTestUser, getToken } from "./helper/test.js"
 
 /*describe("Testing database", () => {
@@ -19,7 +20,8 @@ before(()=> {
 describe("Testing user management", () => {
 
     // first test user is inserted to database
-    const user = { email: "test2@test.com", password: "password123", nickname: "Nickname2" }
+    let user = { email: "test2@test.com", password: "Password123", nickname: "Nickname2" }
+    let deleteToken
     before(() => {
         insertTestUser(user)
     })
@@ -27,7 +29,7 @@ describe("Testing user management", () => {
     // testing signing up
     it("should sign up", async () => {
         // new user is stated as an object
-        const newUser = {email: "test.user@test.com", password: "password123", nickname: "Nickname1"}
+        const newUser = {email: "test.user@test.com", password: "Password123", nickname: "Nickname1"}
 
         // tries to sign up new user
         const response = await fetch("http://localhost:3001/user/signup", {
@@ -53,6 +55,18 @@ describe("Testing user management", () => {
         expect(response.status).to.equal(200)
         expect(data).to.include.all.keys(["userid", "email", "token"])
         expect(data.email).to.equal(user.email)
+
+        // save token for later deletion
+        deleteToken = data.token
     })
 
+    // testing account deletion
+    it('should delete an account', async () => {
+        
+        const response = await fetch("http://localhost:3001/user/", {
+            method: "delete",
+            headers: { Authorization: `Bearer ${deleteToken}` }
+        })
+        expect(response.status).to.equal(204)
+    })
 })

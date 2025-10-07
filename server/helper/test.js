@@ -45,7 +45,7 @@ const insertTestUser = (user) => {
 
 // function to get token
 const getToken = (email) => {
-    return jwt.sign({ email }, process.env.JWT_SECRET_KEY)
+    return jwt.sign({ user: user.email }, process.env.JWT_SECRET_KEY)
 }
 
 export { initializeTestDb, insertTestUser, getToken }

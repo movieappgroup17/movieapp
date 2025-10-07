@@ -132,7 +132,7 @@ router.delete('/', auth, async (req, res, next) => {
         //await pool.query('DELETE FROM movie WHERE userID = $1', [userID])
         await pool.query('DELETE FROM groups WHERE ownerID = $1', [userID])
         await pool.query('DELETE FROM users WHERE userID = $1', [userID])
-        res.json({ message: 'Account deleted.' })
+        res.status(204).json({ message: 'Account deleted.' })
     } catch (error) {
         console.error('Delete account error:', error)
         return next(error)
