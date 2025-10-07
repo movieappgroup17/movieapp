@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { UserContext } from './UserContext'
 import axios from 'axios'
-import { toast, ToastContainer } from 'react-toastify'  // to notify user after login or signup
+import { toast } from 'react-toastify'  // to notify user after login or signup
 import 'react-toastify/dist/ReactToastify.css';
+import { logout } from '../utils/logout'
 
 
 export default function UserProvider({ children }) {
@@ -13,12 +14,12 @@ export default function UserProvider({ children }) {
     const [user, setUser] = useState(userFromStorage ? 
         JSON.parse(userFromStorage) : { email: '', password: '', nickname: '' })
 
-    // Logout function
+    /* Logout function
     const logout = () => {
         sessionStorage.removeItem('user')
         setUser({ email: '', password: '', nickname: '', token: '' })
         toast.success('You have logged out! Byeee!')
-    }
+    }*/
 
     // Sign up function for new users
     const signUp = async () => {
