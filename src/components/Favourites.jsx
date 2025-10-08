@@ -72,10 +72,10 @@ export default function ToggleFav({ movie, favourites, setFavourites, onEnsureIn
     }
   }
 
-  // if favourites are still loading, show "Loading..."
-  if (loadingFavs) return <div>Loading...</div>
+  // if favourites are still loading or user's have not signed in, "add to favourites" -button is not shown
+  if (loadingFavs) return
 
-
+// if user signed in and favourites are done loading, "add to favourites" -button is shown
   return (
     <div style={{ marginTop: 8 }}>
       <button onClick={toggleFav} disabled={loading}>

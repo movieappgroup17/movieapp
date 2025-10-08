@@ -224,9 +224,9 @@ function Search() {
               onEnsureInDb={handleToggleMovieChoice}
               loadingFavs={loadingFavs}
             />
-            <button onClick={() => handleMovieChoice(m)}>
+            {user && (<button onClick={() => handleMovieChoice(m)}>
               Review this movie
-            </button>
+            </button>) }
             {/* Add to Group Button */}
             {!loadingGroup && userGroup && (
             <button onClick={() => handleAddToGroup(m)}>
