@@ -25,6 +25,8 @@ describe("Testing user management", () => {
     let user = { email: "test2@test.com", password: "Password123", nickname: "Nickname2" }
     // new user is stated as an object
     const newUser = {email: "test.user@test.com", password: "Password123", nickname: "Nickname1"}
+    // failed user is stated as an object
+    const failUser = {email: "test.user@test.com", password: "password123", nickname: "Nickname3"}
     // token for account deletion
     let deleteToken
 
@@ -51,6 +53,34 @@ describe("Testing user management", () => {
         expect(data.nickname).to.equal(newUser.nickname) // check email matches the input data
     })
 
+    it("should not sign up, password is invalid", async () => {
+        // send POST request to the server
+        const response = await fetch("http://localhost:3001/user/signup", {
+            method: "post",
+            headers: { "Content-Type": "application/json"},
+            body: JSON.stringify({ user: failUser })
+        })
+
+        const data = await response.json()  // parse server response as JSON
+
+        // it should not sign up, because password does not have a upcase letter
+        expect(response.status).to.equal(400)   // check response status is 400
+    })
+
+    it("should not sign up, email / nickname are already registered", async () => {
+        // send POST request to the server
+        const response = await fetch("http://localhost:3001/user/signup", {
+            method: "post",
+            headers: { "Content-Type": "application/json"},
+            body: JSON.stringify({ user: newUser })
+        })
+
+        const data = await response.json()  // parse server response as JSON
+
+        // it should not sign up, because password does not have a upcase letter
+        expect(response.status).to.equal(409)   // check response status is 409
+    })
+
     // testing signing in
     it('should sign in', async () => {
         // send POST request to the server
@@ -68,6 +98,21 @@ describe("Testing user management", () => {
         // save token for later deletion
         deleteToken = data.token
     })
+
+    it('should NOT sign in, no email/password is submitted', async () => {
+        // send POST request to the server
+        const response = await fetch("http://localhost:3001/user/signin", {
+            method: "post",
+            headers: { "Content-Type": "application/json"},
+            body: JSON.stringify({ email: "", password: "" })
+        })
+        const data = await response.json()  // parse server response as JSON
+
+        expect(response.status).to.equal(400)   // check response status is 400
+        expect(data.error.message).to.equal('Email and password are required') // check error message
+
+    })
+
 
     // testing account deletion
     it('should delete an account', async () => {
