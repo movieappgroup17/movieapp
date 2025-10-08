@@ -42,4 +42,14 @@ async function searchMoviesByText({ query, page = 1 }) {
     return data;
 }
 
-export { discoverMovies, searchMoviesByText, fetchGenres }
+// fetching most trending movies from TMDB API
+async function getTrendingMovies() {
+    const params = {
+        api_key: apiKey,
+        language: "en-US"
+    };
+    const { data } = await api.get("/trending/movie/week", { params });
+    return data.results;
+}
+
+export { discoverMovies, searchMoviesByText, fetchGenres, getTrendingMovies }
