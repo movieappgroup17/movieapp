@@ -53,7 +53,7 @@ describe("Testing user management", () => {
         expect(data.nickname).to.equal(newUser.nickname) // check email matches the input data
     })
 
-    it("should not sign up, password is invalid", async () => {
+    it("should NOT sign up, password is invalid", async () => {
         // send POST request to the server
         const response = await fetch("http://localhost:3001/user/signup", {
             method: "post",
@@ -67,7 +67,7 @@ describe("Testing user management", () => {
         expect(response.status).to.equal(400)   // check response status is 400
     })
 
-    it("should not sign up, email / nickname are already registered", async () => {
+    it("should NOT sign up, email / nickname are already registered", async () => {
         // send POST request to the server
         const response = await fetch("http://localhost:3001/user/signup", {
             method: "post",
@@ -77,7 +77,7 @@ describe("Testing user management", () => {
 
         const data = await response.json()  // parse server response as JSON
 
-        // it should not sign up, because password does not have a upcase letter
+        // it should not sign up, because nickname/email are already registered to an another user
         expect(response.status).to.equal(409)   // check response status is 409
     })
 
@@ -104,15 +104,41 @@ describe("Testing user management", () => {
         const response = await fetch("http://localhost:3001/user/signin", {
             method: "post",
             headers: { "Content-Type": "application/json"},
-            body: JSON.stringify({ email: "", password: "" })
+            body: JSON.stringify({ user: {email: "", password: ""} })
         })
         const data = await response.json()  // parse server response as JSON
-
+        // it should not sign in, because email/password are missing
         expect(response.status).to.equal(400)   // check response status is 400
         expect(data.error.message).to.equal('Email and password are required') // check error message
 
     })
 
+    it("should NOT sign in, user is not registered", async () => {
+        // send POST request to the server
+        const response = await fetch("http://localhost:3001/user/signin", {
+            method: "post",
+            headers: { "Content-Type": "application/json"},
+            body: JSON.stringify({ user: {email: "testfail.user@test.com", password: "Password987"} })
+        })
+        const data = await response.json()  // parse server response as JSON
+
+        expect(response.status).to.equal(404)   // check response status is 404
+        expect(data.error.message).to.equal('User not found') // check error message
+    })
+
+    it("should NOT sign in, user has wrong password", async () => {
+                // send POST request to the server
+        const response = await fetch("http://localhost:3001/user/signin", {
+            method: "post",
+            headers: { "Content-Type": "application/json"},
+            body: JSON.stringify({ user: {email: "test.user@test.com", password: "Password987"} })
+        })
+        const data = await response.json()  // parse server response as JSON
+        // should not sign in, because user´r password is wrong
+        expect(response.status).to.equal(401)   // check response status is 401
+        expect(data.error.message).to.equal('Invalid password') // check error message
+
+    })
 
     // testing account deletion
     it('should delete an account', async () => {
@@ -187,8 +213,7 @@ describe("Testing logout in Frontend", () => {
 
 // testing reviews
 describe("Testing browsing reviews", () => {  
-    
-    
+
     const firstMovie = {
             movieID: 8587,
             title: "The Lion King",
@@ -220,6 +245,7 @@ describe("Testing browsing reviews", () => {
     before( async () => {
         
         try {
+            // add test movies and reviews to the database
             await addTestMovie(firstMovie)
             await addTestMovie(secondMovie)
             await addTestReview(firstReview)
@@ -231,13 +257,15 @@ describe("Testing browsing reviews", () => {
         
     })
 
+    // testing browsing reviews
     it("should get all reviews", async () => {
+        // GET request to the server
         const response = await fetch("http://localhost:3001/reviews", {
             method: "get",
             headers: { "Accept": "application/json" }
         })
         const data = await response.json()  // parse server response as JSON
-        expect(data.length).to.equal(2)
+        expect(data.length).to.equal(2) // 2 reviews were added before testing, so it should return 2 objects
         expect(data[0]).to.include.all.keys(["movieid", "userid", "stars", "text"])  // check response contains all expected keys
         expect(data[1]).to.include.all.keys(["movieid", "userid", "stars", "text"])  // check response contains all expected keys
     })
