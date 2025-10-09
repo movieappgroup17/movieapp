@@ -228,7 +228,7 @@ function Search() {
             />
             {user && (<button onClick={() => handleMovieChoice(m)}>
               Review this movie
-            </button>
+            </button>)}
             {!loadingGroups && userGroups.length > 0 && (
             <select
             onChange={(e) => {
