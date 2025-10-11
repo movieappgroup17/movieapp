@@ -16,6 +16,17 @@ router.post('/signup', (req, res, next) => {
         return next(error)
     }
 
+    // password check
+    /* Must contain:
+        - minimum 8 characters
+        - a lowercase letter
+        - a uppercase letter
+        - a number
+    */
+    if (user.password.length < 8 || user.password.search(/[a-z]/) < 0 || user.password.search(/[A-Z]/) < 0 || user.password.search(/[0-9]/) < 0) {
+        return res.status(400).json({ error: 'Failed to fill password requirements'})
+    }
+
     // password is hashed before stored in database
     hash(user.password, 10, (err, hashedPassword) => {
         if (err) return next(err)
@@ -99,7 +110,7 @@ router.post('/signin', (req, res, next) =>{
 // router for deleting user account
 router.delete('/', auth, async (req, res, next) => {
     try {
-        const email = req.user.user // get email from token
+        const email = req.user // get email from token
         console.log('deleten email: ', email)
 
         if (!email) {
@@ -121,7 +132,7 @@ router.delete('/', auth, async (req, res, next) => {
         //await pool.query('DELETE FROM movie WHERE userID = $1', [userID])
         await pool.query('DELETE FROM groups WHERE ownerID = $1', [userID])
         await pool.query('DELETE FROM users WHERE userID = $1', [userID])
-        res.json({ message: 'Account deleted.' })
+        res.status(204).json({ message: 'Account deleted.' })
     } catch (error) {
         console.error('Delete account error:', error)
         return next(error)

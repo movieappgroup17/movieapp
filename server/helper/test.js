@@ -36,16 +36,44 @@ const insertTestUser = (user) => {
                 if (err) {
                     console.error('Error inserting user:', err)
                 } else {
-                    console.log('Test user inserted successfully')
+                    console.log('Test user inserted successfully:', user.nickname)
                 }
             }
         )
     })
 }
 
-// function to get token
-const getToken = (email) => {
-    return jwt.sign({ email }, process.env.JWT_SECRET_KEY)
+// function to add test review
+
+const addTestReview = async (review) => {
+    try {
+        const result = await pool.query(`INSERT INTO review (movieid, userid, stars, date, text)
+            VALUES ($1, $2, $3, CURRENT_DATE, $4)`,
+            [review.movieID, review.userID, review.stars, review.text])
+        console.log("Review added successfully")
+        return result
+    } catch (error) {
+        console.error("Error inserting review:", error)
+    }
 }
 
-export { initializeTestDb, insertTestUser, getToken }
+// function to add test movie
+
+const addTestMovie = async (movie) => {
+    try {
+        const result = await pool.query(`INSERT INTO movie (movieID, title, date, text, imageURL)
+        VALUES ($1, $2, $3, $4, $5)`,
+        [movie.movieID, movie.title, movie.date, movie.text, movie.imageURL])
+        console.log("Movie added successfully")
+        return result
+    } catch (error) {
+        console.log("Error adding movie: ", error)
+    }
+}
+
+// function to get token
+const getToken = (email) => {
+    return jwt.sign({ user: user.email }, process.env.JWT_SECRET_KEY)
+}
+
+export { initializeTestDb, insertTestUser, getToken, addTestReview, addTestMovie }
