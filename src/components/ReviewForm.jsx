@@ -15,7 +15,7 @@ export default function ReviewForm({ movieID, onReviewAdded, tmdbMovies = {} }) 
       return
     }
     try {
-      const res = await fetch("http://localhost:3001/reviews", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/reviews`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

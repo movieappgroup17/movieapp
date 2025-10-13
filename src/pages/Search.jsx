@@ -3,7 +3,7 @@ import { SearchBar } from '../components/SearchBar.jsx'
 import { discoverMovies, searchMoviesByText } from '../components/SearchFunctions'
 import ReactPaginate from 'react-paginate'
 import Header from '../components/Header'
-import './css/search.css'
+import './css/Search.css'
 import ToggleFav from '../components/Favourites.jsx'
 import ReviewsList from '../components/ReviewsList.jsx'
 import { useNavigate } from "react-router-dom"
@@ -40,7 +40,7 @@ function Search() {
         try {
           // check if movie is found in database and return it
           // if it is not in database, insert it to database 
-          const res = await fetch(`http://localhost:3001/movies/getOrCreate`, {
+          const res = await fetch(`${import.meta.env.VITE_API_URL}/movies/getOrCreate`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -65,7 +65,7 @@ function Search() {
         try {
           // check if movie is found in database and return it
           // if it is not in database, insert it to database 
-          const res = await fetch(`http://localhost:3001/movies/getOrCreate`, {
+          const res = await fetch(`${import.meta.env.VITE_API_URL}/movies/getOrCreate`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -99,12 +99,12 @@ function Search() {
     //Check if the user is a member of a group
     const fetchUserGroups = async () => {
       try {
-        const resAll = await fetch('http://localhost:3001/groups/')
+        const resAll = await fetch(`${import.meta.env.VITE_API_URL}/groups/`)
         const allGroups = await resAll.json()
 
         const memberGroups = []
         for (let g of allGroups) {
-          const resCheck = await fetch(`http://localhost:3001/groups/${g.groupid}/members/${user.userid}`)
+          const resCheck = await fetch(`${import.meta.env.VITE_API_URL}/groups/${g.groupid}/members/${user.userid}`)
           const checkData = await resCheck.json()
           if (checkData.isMember){
             memberGroups.push(g)
@@ -126,7 +126,7 @@ function Search() {
     if (!user) return
 
     try {
-      const resMovie = await fetch('http://localhost:3001/movies/getOrCreate', {
+      const resMovie = await fetch(`${import.meta.env.VITE_API_URL}/movies/getOrCreate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -140,7 +140,7 @@ function Search() {
       const dbMovie = await resMovie.json()
 
       // Add movie to group
-      await fetch(`http://localhost:3001/groups/${groupid}/movies`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/groups/${groupid}/movies`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
