@@ -115,7 +115,7 @@ For this project we created PostgreSQL database with pgAdmin 4.
 
 **Class-diagram:**
 
-<img src="./src/assets/images/DBClassDiagram.png">
+<img src="./documents/DBClassDiagram.png">
 
 **Design for our database:**
 - Users
@@ -153,7 +153,7 @@ For this project we created PostgreSQL database with pgAdmin 4.
 
 **Site map:**
 
-<img src="./src/assets/images/sitemap.png">
+<img src="./documents/sitemap.png">
 ---
 
 ### Project outcome
