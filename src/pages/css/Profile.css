@@ -1,0 +1,162 @@
+#favouritelist,
+#mygroups,
+#myrequests{
+  display: block;
+  margin: 2rem auto;
+  width: 100%;
+  padding: 0 1rem;
+}
+
+
+  #favouritelist,
+#favouriteOptions,
+#mygroups,
+#myrequests {
+    border: 1px solid #dedfe0;
+    box-shadow: 0 0 0 1px #e6e6e6;
+    border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+#favouriteOptions{
+    width:100%;
+    text-align: center;
+}
+
+#grouplist{
+    width: 100%;
+    text-align: center;
+}
+
+#favouritelist ul li {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 0.75rem;
+  }
+
+#deleteBtn {
+    color: #a90000;
+    border-color: #a90000;
+    background-color: #fff;
+    margin: 1rem 0 3rem;
+    border-radius: 8px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    
+  }
+  
+   #deleteBtn:hover {
+    background-color: #a90000;
+    color: #fff;
+  }
+
+ #grouplist h2,
+ #favouritelist h2,
+ #myrequests h2{
+    color: #125aa6;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    padding-bottom: .25rem;
+    text-align: center;
+  }
+
+  #copy-linkBtn,
+  #visibilityBtn,
+  #itemDelBtn{
+    height: 25px;
+    padding: 0 0.75rem;
+    border: 1px solid #dedfe0;
+    border-radius: 8px;
+    background: #fff;
+    font: inherit;
+    font-size: 13px;
+  }
+
+  #copy-linkBtn:hover,
+  #visibilityBtn:hover,
+  #itemDelBtn:hover{
+    outline: none;
+    box-shadow: 0 0 0 3px #e6e6e6;
+  }
+
+  #itemDelBtn{
+    margin-left: auto;
+  }
+
+#myrequests {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background: #fff;
+    border: 1px solid #dedfe0;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+  #myrequests ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+  }
+
+  #myrequests li{
+    background: #fafbfc;
+    border: 1px solid #eef1f4;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    align-items: center;
+  }
+
+  #myrequests li h5{
+    margin: 0 0 .25rem 0;
+  }
+  #myrequests li p{
+    margin: .25rem 0;
+    color: #333;
+  }
+  
+  #myrequests button{
+    height: 30px;
+    padding: 0 .9rem;
+    border: 1px solid #dedfe0;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+
+  }
+  #myrequests button + button{
+    margin-left: .5rem;
+  }
+  #myrequests button:hover,
+  #myrequests button:focus{
+    outline: none;
+    box-shadow: 0 0 0 3px #e6e6e6;
+  }
+  
+  #myrequests li button:first-of-type{
+    color: #1a7f37;
+    border-color: #1a7f37;
+  }
+  #myrequests li button:first-of-type:hover{
+    background: #1a7f37;
+    color: #fff;
+  }
+  #myrequests li button:last-of-type{
+    color: #a90000;
+    border-color: #a90000;
+  }
+  #myrequests li button:last-of-type:hover{
+    background: #a90000;
+    color: #fff;
+  }

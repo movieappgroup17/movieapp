@@ -33,7 +33,7 @@ export default function Authentication({ authenticationMode }) {
     return (
         <>
         <Header pageTitle={"Ready to make a scene?"}/>
-        <div>
+        <div className="auth-container">
             <h3>{authenticationMode === AuthenticationMode.SignIn ? 'Sign in' : 'Sign up'}</h3>
             <form onSubmit={handleSubmit}>
                 <label>Email</label>
@@ -65,7 +65,7 @@ export default function Authentication({ authenticationMode }) {
                 </Link>
             </form>
         </div>
-        <div className="alert alert-light d-flex align-items-center" role="alert">
+        <div className="password-rules" role="alert">
             <svg
   xmlns="http://www.w3.org/2000/svg"
   width="30"    // esim. 16, 20 tai 24

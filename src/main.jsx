@@ -7,7 +7,7 @@ import Authentication, { AuthenticationMode } from './pages/Authentication'
 import NotFound from './pages/NotFound.jsx'
 import UserProvider from './context/UserProvider.jsx'
 import { ToastContainer } from 'react-toastify'
-
+import './scss/styles.scss'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

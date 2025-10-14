@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react'
 import Header from '../components/Header'
 import { UserContext } from '../context/UserContext'
+import './css/Favourites.css'
 
 export default function Favorites() {
 
@@ -36,25 +37,24 @@ export default function Favorites() {
       <Header pageTitle={"Favorites"} />
       <div>
         <div>
-        <ul className="list-group list-group-horizontal">
+        <ul className="list">
           {favouritelists.map(list => (
             <li key={list.listID} className="list-group-item">
-              <div className="ms-2 me-auto w-100 text-center fs-3">
-                  <div className="fw-bold">{list.nickname}'s list</div>
-              </div>
-              <ol className="list-group list-group-numbered">
+                  <div id='whose-list'><h2>{list.nickname}'s list</h2></div>
+              <ol className="list-group">
                 {list.movies?.map(movie => (
-                  <li key={movie.movieID} className="list-group-item d-flex justify-content-between align-items-center">
-                    <div className="flex-grow-1 d-flex justify-content-center align-items-center gap-2">
-                      <div className="fw-bold">{movie.title}</div>
-                      <img
+                  <li key={movie.movieID} className="list-group-item d-flex flex-column align-items-center text-center">
+                  <div className="fw-bold mb-2">{movie.title}</div>
+                  <img
                     src={`https://image.tmdb.org/t/p/w200${movie.imageURL}` || "https://placehold.co/100x150?text=No+Image"}
-                      alt={movie.title}
-                      style={{ width: "100px" }}
-                    />
-                      
-                    </div>
-                  </li>
+                    alt={movie.title}
+                    style={{
+                      width: "100px",
+                      borderRadius: "8px",
+                      boxShadow: "0 1px 4px rgba(0,0,0,0.1)"
+                    }}
+                  />
+                </li>                
                 ))}
               </ol>
             </li>

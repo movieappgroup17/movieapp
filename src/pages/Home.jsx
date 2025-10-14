@@ -17,8 +17,9 @@ export default function Home() {
 
   return (
     <>
-      <Header pageTitle="Home" />
+      <Header pageTitle="USceneThis?" />
       <div className="home-container">
+        <center><p>Welcome to USceneThis? - an interactive movie database </p></center>
         <h2>Trending movies this week</h2>
         <div className="movies-grid">
           {trendingMovies.map(movie => (
