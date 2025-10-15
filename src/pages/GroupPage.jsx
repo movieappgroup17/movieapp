@@ -3,6 +3,7 @@ import Header from '../components/Header'
 import { useParams, useNavigate } from 'react-router-dom'
 import { UserContext } from '../context/UserContext'
 import { toast } from 'react-toastify'
+import './css/Groups.css'
 import { getGroupById, deleteGroup, checkIsGroupMember } from '../components/GroupFunctions'
 
 export default function GroupPage() {
@@ -75,12 +76,12 @@ export default function GroupPage() {
   const fetchGroupMovies = async () => {
     try {
       const user = JSON.parse(sessionStorage.getItem('user'))
-      const res = await fetch(`http://localhost:3001/groups/${id}/movies`)
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/groups/${id}/movies`)
       const data = await res.json()
       setGroupMovies(data)
 
       // Fetch user's member groups
-      const resGroups = await fetch(`http://localhost:3001/groups/user/${user.userid}`)
+      const resGroups = await fetch(`${import.meta.env.VITE_API_URL}/groups/user/${user.userid}`)
       const memberGroups = await resGroups.json()
       setUserGroups(memberGroups)
     } catch (err) {
@@ -139,7 +140,7 @@ export default function GroupPage() {
 
     const exampleMovieID = 11
     try {
-      await fetch(`http://localhost:3001/groups/${id}/movies`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/groups/${id}/movies`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -161,13 +162,13 @@ export default function GroupPage() {
   return (
     <>
       <Header pageTitle={group.groupname} />
-      <div>
+      <div id='groupinfo'>
         <h2>{group.groupname}</h2>
         <p>Owner: {group.owner}</p>
         <p>{group.description}</p>
         {isLoggedIn && (
           <>
-            <button onClick={handleDeleteGroup}>Delete this group</button>
+            <button id='deleteBtn' onClick={handleDeleteGroup}>Delete this group</button>
             <button onClick={() => navigate('/groups')}>Go back</button>
             <GroupMembers groupID={id}/>
           </>
@@ -176,7 +177,7 @@ export default function GroupPage() {
         {/* Theatre selection for showtimes */}
         <div style={{ margin: '10px 0' }}>
           <label>Select theatre: </label>
-          <select onChange={e => setSelectedArea(e.target.value)} value={selectedArea || ''}>
+          <select className='theatre-select' onChange={e => setSelectedArea(e.target.value)} value={selectedArea || ''}>
             <option value="" disabled>Choose theatre</option>
             {areas.map(area => (
               <option key={area.ID} value={area.ID}>{area.Name}</option>
@@ -184,7 +185,7 @@ export default function GroupPage() {
           </select>
         </div>
 
-        <h3>Movies in this group</h3>
+        <h3 className="group-movies-title">Movies in this group</h3>
         {groupMovies.length > 0 ? (
           <ul>
             {groupMovies.map(movie => (
@@ -233,7 +234,7 @@ const currentUserID = String(currentUser?.userid ?? currentUser?.userID ?? curre
     try {
       setLoading(true)
       setError(null)
-      const res = await fetch(`http://localhost:3001/groups/${groupID}/members`)
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/groups/${groupID}/members`)
       if (!res.ok) throw new Error(`Failed to fetch members: ${res.status}`)
       const data = await res.json()
       setOwnerID(data.ownerID)
@@ -253,7 +254,7 @@ const currentUserID = String(currentUser?.userid ?? currentUser?.userID ?? curre
   const handleRemove = async (userID) => {
     if (!window.confirm('Remove this member from the group?')) return
     try {
-      const res = await fetch(`http://localhost:3001/groups/remove`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/groups/remove`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ groupid: groupID, userid: userID, ownerid: currentUserID })
@@ -272,7 +273,7 @@ const currentUserID = String(currentUser?.userid ?? currentUser?.userID ?? curre
   const handleLeave = async () => {
     if (!window.confirm('Leave this group?')) return
     try {
-      const res = await fetch(`http://localhost:3001/groups/leave`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/groups/leave`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ groupid: groupID, userid: currentUserID })

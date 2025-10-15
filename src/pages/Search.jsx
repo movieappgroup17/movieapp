@@ -3,7 +3,7 @@ import { SearchBar } from '../components/SearchBar.jsx'
 import { discoverMovies, searchMoviesByText } from '../components/SearchFunctions'
 import ReactPaginate from 'react-paginate'
 import Header from '../components/Header'
-import './css/search.css'
+import './css/Search.css'
 import ToggleFav from '../components/Favourites.jsx'
 import ReviewsList from '../components/ReviewsList.jsx'
 import { useNavigate } from "react-router-dom"
@@ -17,8 +17,8 @@ function Search() {
   const [err, setErr] = useState(null)
   const [page, setPage] = useState(1)
   const [pageCount, setPageCount] = useState(0)
-  const [userGroup, setUserGroup] = useState(null)
-  const [loadingGroup, setLoadingGroup] = useState(true)
+  const [userGroups, setUserGroups] = useState([])
+  const [loadingGroups, setLoadingGroups] = useState(true)
   const { favourites, setFavourites, loadingFavs } = useFavourites()
 
   const navigate = useNavigate()
@@ -40,7 +40,7 @@ function Search() {
         try {
           // check if movie is found in database and return it
           // if it is not in database, insert it to database 
-          const res = await fetch(`http://localhost:3001/movies/getOrCreate`, {
+          const res = await fetch(`${import.meta.env.VITE_API_URL}/movies/getOrCreate`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -65,7 +65,7 @@ function Search() {
         try {
           // check if movie is found in database and return it
           // if it is not in database, insert it to database 
-          const res = await fetch(`http://localhost:3001/movies/getOrCreate`, {
+          const res = await fetch(`${import.meta.env.VITE_API_URL}/movies/getOrCreate`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -96,24 +96,25 @@ function Search() {
     useEffect(() => {
     if (!user) return
 
+    //Check if the user is a member of a group
     const fetchUserGroups = async () => {
       try {
-        const resAll = await fetch('http://localhost:3001/groups/')
+        const resAll = await fetch(`${import.meta.env.VITE_API_URL}/groups/`)
         const allGroups = await resAll.json()
 
-        //Check if the user is a memvber of a group
+        const memberGroups = []
         for (let g of allGroups) {
-          const resCheck = await fetch(`http://localhost:3001/groups/${g.groupid}/members/${user.userid}`)
+          const resCheck = await fetch(`${import.meta.env.VITE_API_URL}/groups/${g.groupid}/members/${user.userid}`)
           const checkData = await resCheck.json()
           if (checkData.isMember){
-            setUserGroup(g)
-            break
+            memberGroups.push(g)
           } 
         }
+        setUserGroups(memberGroups)
       } catch (err) {
         console.error('Failed to fetch user group:', err)
       } finally{
-        setLoadingGroup(false)
+        setLoadingGroups(false)
       }
     }
 
@@ -121,11 +122,11 @@ function Search() {
   }, [user])
 
   // Handler to add movie to a group
-  const handleAddToGroup = async (movie) => {
-    if (!user || !userGroup) return
+  const handleAddToGroup = async (movie, groupid) => {
+    if (!user) return
 
     try {
-      const resMovie = await fetch('http://localhost:3001/movies/getOrCreate', {
+      const resMovie = await fetch(`${import.meta.env.VITE_API_URL}/movies/getOrCreate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -139,7 +140,7 @@ function Search() {
       const dbMovie = await resMovie.json()
 
       // Add movie to group
-      await fetch(`http://localhost:3001/groups/${userGroup.groupid}/movies`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/groups/${groupid}/movies`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -150,7 +151,8 @@ function Search() {
         })
       })
 
-      toast.success(`${movie.title} added to "${userGroup.groupname}"!`)
+      const addedGroup = userGroups.find(g => g.groupid === groupid)
+      toast.success(`${movie.title} added to "${addedGroup?.groupname}"!`)
     } catch (error) {
       console.error('Error adding movie to group:', error)
       toast.error('Failed to add movie to group')
@@ -174,7 +176,7 @@ function Search() {
           filtered = filtered.filter(m => m.release_date?.startsWith(newFilters.year))
         }
         if (newFilters.genres.length) {
-          filtered = filtered.filter(m => m.genres_ids?.some(g => newFilters.genres.includes(g)))
+          filtered = filtered.filter(m => m.genre_ids?.some(g => newFilters.genres.includes(g)))
         }
         if (newFilters.sort === "release_date.desc") {
           filtered = [...filtered].sort((a, b) => new Date(b.release_date) - new Date(a.release_date))
@@ -224,14 +226,24 @@ function Search() {
               onEnsureInDb={handleToggleMovieChoice}
               loadingFavs={loadingFavs}
             />
-            <button onClick={() => handleMovieChoice(m)}>
+            {user && (<button onClick={() => handleMovieChoice(m)}>
               Review this movie
-            </button>
-            {/* Add to Group Button */}
-            {!loadingGroup && userGroup && (
-            <button onClick={() => handleAddToGroup(m)}>
-            Add to "{userGroup.groupname}"
-            </button>
+            </button>)}
+            {!loadingGroups && userGroups.length > 0 && (
+            <select
+            onChange={(e) => {
+              const groupId = Number (e.target.value)
+              if (groupId) handleAddToGroup(m, groupId)
+              e.target.selectedIndex = 0  
+            }}
+            >
+            <option value="">Add to group</option>
+            {userGroups.map(g => (
+              <option key={g.groupid} value={g.groupid}>
+                {g.groupname}
+              </option>
+            ))}
+            </select>
             )}  
           </div>
         ))}

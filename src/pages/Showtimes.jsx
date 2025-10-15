@@ -9,6 +9,7 @@ export default function Showtimes() {
   const [selectedArea, setSelectedArea] = useState(null)
   const [shows, setShows] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date())
+  const [errorMessage, setErrorMessage] = useState(null)
 
   // function goes through XML-data recursively and changes it to JSON-object
   const xmlToJson = useCallback((node) => {
@@ -75,18 +76,22 @@ export default function Showtimes() {
       if (!Array.isArray(shows)) {
         shows = [shows]
       }
-
+      setShows(shows) // set all shows into variable
+      setErrorMessage(null) // set error message to null
       // debugging
-      for (let i = 0; i < shows.length; i++) {
+      /*for (let i = 0; i < shows.length; i++) {
         const show = shows[i]
-      }
-      setShows(shows)
+      }*/
+      
     } else {
       setShows([])
+      setErrorMessage("No shows found")
     }
     })
     .catch(error => {
       console.log(error)
+      setShows([])
+      setErrorMessage("Shows can not be fetched due to Finnkino API error")
     })
   }
 
@@ -158,12 +163,15 @@ export default function Showtimes() {
         </div>
 
         <div id='secondColumn'>
-          <h2>Shows</h2>
+          <h2 id='pagename'>Shows available</h2>
           <h3 id='date'>{currentDate.toLocaleDateString()}</h3>
-          <button type='button' onClick={handlePreviosDayButton}>Previous</button>
-          <button type='button' onClick={handleNextDayButton}>Next</button>
+          <button type='button' onClick={handlePreviosDayButton}>Previous day</button>
+          <button type='button' onClick={handleNextDayButton}>Next day</button>
           <div>
-            {shows.map((show, index) => (
+
+            {errorMessage && <p id="errormessage">{errorMessage}</p>}
+
+            {!errorMessage && shows.map((show, index) => (
               <div key={index}>
                 <h3 id='movieName'>{show.Title}</h3>
 
@@ -182,10 +190,10 @@ export default function Showtimes() {
                       Auditorium: {show.TheatreAuditorium}
                     </p>
                     <p>
-                      Language: {show.SpokenLanguage.Name}
+                      Language: {show.SpokenLanguage?.Name || "Unknown"}
                     </p>
                     <p>
-                      Genre: {show.Genres}
+                      Genre: {show.Genres || "Unknown"}
                     </p>
                   </div>
 
@@ -201,7 +209,7 @@ export default function Showtimes() {
             ))}
         </div>
         
-        {shows.length === 0 && selectedArea && (
+        {!errorMessage && shows.length === 0 && selectedArea && (
           <p id="noShows">No shows today</p>
         )}
         </div>

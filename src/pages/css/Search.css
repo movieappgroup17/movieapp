@@ -5,6 +5,32 @@
   gap: 1rem;
 }
 
+#movieContainer button{
+  height: 25px;
+  padding: 0 0.75rem;
+  border: 1px solid #dedfe0;
+  border-radius: 8px;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+}
+
+#movieContainer select{
+  height: 25px;
+  padding: 0 0.75rem;
+  border: 1px solid #dedfe0;
+  border-radius: 8px;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+}
+
+#movieContainer select:focus,
+#movieContainer select:hover{
+  outline: none;
+  box-shadow: 0 0 0 3px #e6e6e6;
+}
+
 #movieCard {
   flex: 1 1 calc(33.333% - 1rem); /* 3 per rivi */
   box-sizing: border-box;
@@ -13,6 +39,7 @@
  #movieTitle{
     font-weight: 500;
     font-size: 15px;
+    color: #125aa6;
  }
 
  #movieDescription{
@@ -42,14 +69,15 @@
 
 .pagination li.selected,
 .pagination select:focus,
-.pagination button:focus{
+.pagination button:focus,
+.pagination button:hover{
   outline: none;
   box-shadow: 0 0 0 3px #e6e6e6;
 }
 
 .pagination select,
 .pagination input,
-.pagination button {
+.pagination button{
   height: 25px;
   padding: 0 0.75rem;
   border: 1px solid #dedfe0;

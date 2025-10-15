@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { UserContext } from './UserContext'
 import axios from 'axios'
-import { toast, ToastContainer } from 'react-toastify'  // to notify user after login or signup
+import { toast } from 'react-toastify'  // to notify user after login or signup
 import 'react-toastify/dist/ReactToastify.css';
+import { logout } from '../utils/logout'
 
 
 export default function UserProvider({ children }) {
@@ -13,12 +14,12 @@ export default function UserProvider({ children }) {
     const [user, setUser] = useState(userFromStorage ? 
         JSON.parse(userFromStorage) : { email: '', password: '', nickname: '' })
 
-    // Logout function
+    /* Logout function
     const logout = () => {
         sessionStorage.removeItem('user')
         setUser({ email: '', password: '', nickname: '', token: '' })
         toast.success('You have logged out! Byeee!')
-    }
+    }*/
 
     // Sign up function for new users
     const signUp = async () => {
@@ -34,6 +35,9 @@ export default function UserProvider({ children }) {
                     toast.error('This email is already registered. Sign in or use other email.')
                 } else if (error.response.data.error === 'Nickname already taken') {
                         toast.error('This nickname is already taken. Choose another one.')
+                } else if (error.response.status === 400) { // password requirements are not met
+                    toast.error(error.response.data.error)
+                    toast.info('Please check the requirements below', { autoClose: 9000 })
                 } else {
                     toast.error(error.response.data.error)
                 }

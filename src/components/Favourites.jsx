@@ -33,7 +33,7 @@ export default function ToggleFav({ movie, favourites, setFavourites, onEnsureIn
     
       if (!inFav) {
         // Add to favourites
-        const resp = await fetch("http://localhost:3001/favourites", {
+        const resp = await fetch(`${import.meta.env.VITE_API_URL}/favourites`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -51,7 +51,7 @@ export default function ToggleFav({ movie, favourites, setFavourites, onEnsureIn
         })) 
         toast.success("Added to favourites")  // notify user about successful addition
       } else {
-        const resp = await fetch(`http://localhost:3001/favourites/${movie.id}?userID=${user.userid}`, {
+        const resp = await fetch(`${import.meta.env.VITE_API_URL}/favourites/${movie.id}?userID=${user.userid}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -72,10 +72,10 @@ export default function ToggleFav({ movie, favourites, setFavourites, onEnsureIn
     }
   }
 
-  // if favourites are still loading, show "Loading..."
-  if (loadingFavs) return <div>Loading...</div>
+  // if favourites are still loading or user's have not signed in, "add to favourites" -button is not shown
+  if (loadingFavs) return
 
-
+// if user signed in and favourites are done loading, "add to favourites" -button is shown
   return (
     <div style={{ marginTop: 8 }}>
       <button onClick={toggleFav} disabled={loading}>

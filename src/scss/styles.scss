@@ -1,0 +1,173 @@
+// 1) Bootstrapin peruspalikat ensin
+@import "bootstrap/scss/bootstrap";
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/utilities";
+
+@media (max-width: 768px) {
+    #content { grid-template-columns: 1fr; }
+  }
+
+
+:root {
+  --bs-primary: #030213;         
+  --bs-secondary: #e8e9f0;       
+  --bs-success: #28a745;         
+  --bs-info: #0dcaf0;
+  --bs-warning: #ffc107;
+  --bs-danger: #d4183d;          
+  --bs-light: #f8f9fa;
+  --bs-dark: #212529;
+
+  /* Body ja tekstit*/
+  --bs-body-bg: #ffffff;
+  --bs-body-color: #212529;
+  --bs-body-font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --bs-body-font-size: 1rem;
+  --bs-body-font-weight: 400;
+  --bs-body-line-height: 1.5;
+
+  /* Borderit ja linkit*/
+  --bs-border-color: rgba(0, 0, 0, 0.1);
+  --bs-link-color: var(--bs-primary);
+  --bs-link-hover-color: color-mix(in srgb, var(--bs-primary) 80%, black);
+
+  /* Kortit ja komponentit */
+  --bs-card-bg: #ffffff;
+  --bs-card-color: #212529;
+  --bs-card-border-color: rgba(0, 0, 0, 0.1);
+  --bs-btn-border-radius: 0.375rem;
+
+  /* Taustasävyt (Bootstrap utilities)*/
+  --bs-body-secondary-bg: #f0f2f5;
+  --bs-body-tertiary-bg: #e9ecef;
+  --bs-body-secondary-color: #495057;
+  --bs-body-tertiary-color: #6c757d;
+
+  /* Painikkeiden ja varjojen vivahteet */
+  --bs-focus-ring-color: rgba(3, 2, 19, 0.25);
+  --bs-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.15);
+
+}
+
+#menuToggleBtn {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1055; 
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    backdrop-filter: blur(6px);
+  }
+
+  #menuToggleBtn:hover{
+        outline: none;
+        box-shadow: 0 0 0 3px #3a3a3a;
+  }
+  
+  .navbar-toggler {
+    padding: 0.3rem 0.4rem;
+  }
+  .navbar-toggler-icon {
+    background-size: 70% 70%; 
+    background-position: center;
+  }
+  
+ 
+.auth-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 2rem auto;
+    max-width: 500px;
+    padding: 2rem;
+    background: #fff;
+    border: 1px solid #e4e6ea;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  
+  .auth-container h3 {
+    color: #125aa6;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .auth-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+  
+  .auth-container label {
+    font-weight: 600;
+    color: #125aa6;
+  }
+  
+  .auth-container input {
+    width: 100%;
+    border: 1px solid #dedfe0;
+    border-radius: 6px;
+    padding: 0.5rem;
+    font-size: 14px;
+  }
+  
+  .auth-container button {
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    padding: 0 1.25rem;
+    border: 1px solid #dedfe0;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: box-shadow 0.2s ease;
+  }
+  
+  .auth-container button:hover {
+    box-shadow: 0 0 0 3px #e6e6e6;
+  }
+  
+  .auth-container a {
+    text-align: center;
+    margin-top: 0.75rem;
+    color: #125aa6;
+  }
+  
+  .password-rules {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin: 2rem auto;
+    padding: 1rem 1.5rem;
+    background-color: #f8f9fa;
+    border: 1px solid #e4e6ea;
+    border-radius: 8px;
+    max-width: 700px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  }
+  
+  .password-rules svg {
+    flex-shrink: 0;
+    fill: #125aa6;
+  }
+  
+  .password-rules h5 {
+    margin: 0 0 0.5rem 0;
+    color: #125aa6;
+  }
+  
+  .password-rules ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    list-style-type: disc;
+  }
+  
