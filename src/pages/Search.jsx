@@ -167,9 +167,12 @@ function Search() {
     setErr(null)
 
     try {
-      let data;
-      if (newFilters.query) {
+      let data
+      if (newFilters.query && newFilters.query.trim() !== "") {
         data = await searchMoviesByText({ query: newFilters.query, page: newPage })
+      } else {
+        data = await discoverMovies({ page: newPage })
+      }
         let filtered = data.results ?? []
 
         if (newFilters.year) {
@@ -185,13 +188,11 @@ function Search() {
           filtered = [...filtered].sort((a, b) => b.vote_average - a.vote_average)
         }
 
-        data.results = filtered
-      }
-      setResults(data?.results ?? [])
+      setResults(filtered)
       setPageCount(data?.total_pages ?? 0)
       setPage (newPage)
     } catch (e) {
-      setErr(e);
+      setErr(e)
     } finally {
       setLoading(false)
     }
