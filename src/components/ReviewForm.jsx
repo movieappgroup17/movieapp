@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useUser } from "../context/useUser"
+import "../pages/css/Reviews.css"
 
 export default function ReviewForm({ movieID, onReviewAdded, tmdbMovies = {} }) {
   const { user } = useUser()
@@ -49,12 +50,10 @@ export default function ReviewForm({ movieID, onReviewAdded, tmdbMovies = {} }) 
   return (
     <form onSubmit={handleSubmit} className="review-form">
       {tmdb?.poster_path && (
-        <div className="mb-2">
+        <div id='revForm'>
           <img
             src={`https://image.tmdb.org/t/p/w200${tmdb.poster_path}`}
-            alt={tmdb.title}
-            className="rounded"
-          />
+           id='revTitle' alt={tmdb.title}/>
         </div>
       )}
 

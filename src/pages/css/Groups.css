@@ -1,9 +1,161 @@
+.groups-container{
+    margin: 0 auto;
+    width: 100%;
+    padding: 1rem 1rem 2rem;
+    display: grid;
+    justify-content: center;
+    align-items: start;
+    grid-template-columns: clamp(350px, 30vw, 500px) 1fr;
+    gap: 2em;
+    font-size: 13px;
+    color: #000;
+}
+
+.groups-container input,
+.groups-container textarea{
+    cursor: pointer;
+}
+
+.create-group {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    border: 1px solid #dedfe0;
+    box-shadow: 0 0 0 1px #e6e6e6;
+    border-radius: 8px;
+  }
+  
+  .create-group h3 {
+    color: #125aa6;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .create-group form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .create-group input,
+  .create-group textarea {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #dedfe0;
+    box-shadow: 0 0 0 1px #e6e6e6;
+    border-radius: 4px;
+    font: inherit;
+  }
+  
+  .create-group textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+
+.groups-list{
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    margin-bottom: 1.5em;
+    padding: 1rem 1rem 2rem;
+    align-items: start;
+    border: 1px solid #dedfe0;
+  border-radius: .75rem;
+  box-shadow: 0 0 0 1px #e6e6e6;
+  position: relative;
+}
+
 .group-card h4 {
-    color: #007bff;
+    color: #125aa6;
     cursor: pointer;
     margin: 0 0 10px 0;
 }
 
 .group-card h4:hover {
     text-decoration: underline;
+}
+
+#groupinfo > h2 {
+    font-size: 30;
+    font-weight: 700;
+    margin: 0 0 .25rem;
+    color: #125aa6;
+  }
+
+  #groupinfo{
+    margin: 0 auto;
+    width: 100%;
+    padding: 1rem 1rem 2rem;
+    display: grid;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2em;
+    text-decoration: none;
+    font-size: 13px;
+    color: #000;
+}
+
+  #groupinfo > p {
+    margin: 0 0 .4rem;
+    color: #000;
+  }
+
+  #groupinfo #deleteBtn {
+    color: #a90000;
+    border-color: #a90000;
+    background-color: #fff;
+  }
+  
+  #groupinfo #deleteBtn:hover {
+    background-color: #a90000;
+    color: #fff;
+  }
+
+.groups-list h3{
+    color: #125aa6;
+    cursor: pointer;
+    margin: 0 0 10px 0;
+}
+
+button{
+    height: 25px;
+    padding: 0 0.75rem;
+    border: 1px solid #dedfe0;
+    border-radius: 8px;
+    background: #fff;
+    font: inherit;
+    font-size: 13px;
+  }
+
+  .button:hover{
+    outline: none;
+    box-shadow: 0 0 0 3px #e6e6e6;
+  }
+
+  .theatre-select:focus,
+  .theatre-select:hover{
+  outline: none;
+  box-shadow: 0 0 0 3px #e6e6e6;
+}
+
+.theatre-select{
+  height: 25px;
+  padding: 0 0.75rem;
+  border: 1px solid #dedfe0;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.group-members{
+    color: #125aa6;
+    cursor: pointer;
+    margin: 0 0 10px 0;
+}
+
+.group-movies-title{
+    color: #125aa6;
+    cursor: pointer;
+    margin: 0 0 10px 0;
 }

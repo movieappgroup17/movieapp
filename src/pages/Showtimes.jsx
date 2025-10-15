@@ -163,10 +163,10 @@ export default function Showtimes() {
         </div>
 
         <div id='secondColumn'>
-          <h2>Shows</h2>
+          <h2 id='pagename'>Shows available</h2>
           <h3 id='date'>{currentDate.toLocaleDateString()}</h3>
-          <button type='button' onClick={handlePreviosDayButton}>Previous</button>
-          <button type='button' onClick={handleNextDayButton}>Next</button>
+          <button type='button' onClick={handlePreviosDayButton}>Previous day</button>
+          <button type='button' onClick={handleNextDayButton}>Next day</button>
           <div>
 
             {errorMessage && <p id="errormessage">{errorMessage}</p>}

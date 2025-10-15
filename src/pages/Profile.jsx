@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'  // to notify user after login or signup
 import 'react-toastify/dist/ReactToastify.css'
 import { rejectRequest, acceptRequest } from '../components/GroupFunctions'
+import './css/Profile.css'
 
 export default function Profile() {
   const { user, deleteAccount } = useContext(UserContext)
@@ -157,10 +158,10 @@ export default function Profile() {
         <div id="favourites" className="row">
           
           <div id="favouritelist" className="col-md-4">
-            <h1>My favourites</h1>
+            <h2>My favourites</h2>
             <ul className="list-unstyled">
               {favourites.movies?.map((movie) => (
-                <li key={movie.movieID} className="mb-3 d-flex align-items-center gap-2">
+                <li key={movie.movieID} className="mb-3 d-flex align-items-center gap-3">
                   <img
                     src={
                       `https://image.tmdb.org/t/p/w200${movie.imageURL}` ||
@@ -171,7 +172,7 @@ export default function Profile() {
                     style={{ width: "100px" }}
                   />
                   <h5>{movie.title}</h5>
-                  <button onClick={() => deleteFavourite(movie.movieID)}>Delete</button>
+                  <button id='itemDelBtn' onClick={() => deleteFavourite(movie.movieID)}>Delete</button>
                   
                 </li>
               ))}
@@ -183,23 +184,21 @@ export default function Profile() {
               <p>
                 Public: <span>{favourites.isPublic ? "Yes" : "No"}</span>
               </p>
-              <button
-                className="btn btn-primary d-flex justify-content-center align-items-center"
+              <button id='visibilityBtn'
                 onClick={handleTogglePublic}
               >
-                {favourites.isPublic ? "Make Private" : "Make Public"}
+                {favourites.isPublic ? "Make List Private" : "Make List Public"}
               </button>
 
               <p>Share link:</p>
-              <div className="input-group">
+              <div id='share-link'>
                 <input
                   type="text"
                   readOnly
                   className="form-control"
                   value={`${window.location.origin}/favourites/share/${favourites.share_token}`}
                 />
-                <button
-                  className="btn btn-outline-secondary d-flex justify-content-center align-items-center"
+                <button id='copy-linkBtn'
                   onClick={() => {
                     navigator.clipboard.writeText(
                       `${window.location.origin}/favourites/share/${favourites.share_token}`
@@ -220,7 +219,7 @@ export default function Profile() {
       ) : (
         <div id="mygroups" className='row'>
           <div id="grouplist" className='col-md-4'>
-            <h1>My groups</h1>
+            <h2>My groups</h2>
             <ul className='list-unstyled'>
               {myGroups.map((group) => (
                 <li key={group.groupid} className='mb-3'>
@@ -232,7 +231,7 @@ export default function Profile() {
           </div>
           {myRequests.length > 0 && 
           <div id="myrequests">
-            <h1>Group requests</h1>
+            <h2>Group requests</h2>
             <ul className='list-unstyled'>
               {myRequests.map((request) => (
                 <li key={request.requestid} className='mb-3'>
@@ -249,11 +248,11 @@ export default function Profile() {
       )}
 
       {isLoggedIn && (
-            <div className="col-md-2 d-flex align-items-start justify-content-end">
+            <div>
               <button
               type='button'
                 onClick={handleDeleteAccount}
-                className="btn btn-danger d-flex justify-content-center align-items-center"
+                id='deleteBtn'
               >
                 Delete your account
               </button>

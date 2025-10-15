@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
-import Footer from './components/Footer'
 import Header from './components/Header'
 import Home from './pages/Home'
 import Favorites from './pages/Favorites'
@@ -45,7 +44,6 @@ function App() {
         </Route>
       </Routes>
     </div>
-    <Footer/>
     <ToastContainer/>
     </>
   )
