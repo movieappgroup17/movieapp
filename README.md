@@ -5,29 +5,42 @@
 
 ## Table of contents
 
-- [*Project introduction*](#project-introduction)
-- [*Project goals*](#project-goals)
-- [*Usage instructions*](#usage-instructions)
-- [*Documentation*](#documentation)
-- [*Project outcome*](#project-outcome)
-- [*Contributors*](#contributors)
+- [Web application - USceneThis?](#web-application---uscenethis)
+      - [*Group 17 (TVT24KMO)*](#group-17-tvt24kmo)
+  - [Table of contents](#table-of-contents)
+  - [Project introduction](#project-introduction)
+  - [Project goals](#project-goals)
+  - [Usage instructions](#usage-instructions)
+    - [Developer setup](#developer-setup)
+      - [Database](#database)
+      - [Open data APIs](#open-data-apis)
+      - [Backend](#backend)
+      - [Frontend](#frontend)
+    - [End user](#end-user)
+  - [Documentation](#documentation)
+    - [Deployment](#deployment)
+    - [Database](#database-1)
+    - [Frontend](#frontend-1)
+  - [](#)
+    - [Project outcome](#project-outcome)
+    - [Contributors](#contributors)
 
 ---
 
 ## Project introduction
 
-The aim of this project was ...
+The aim of this project was to create a web application for movie enthusiasts. USceneThis allows users to browse movies, write reviews and create their own favourite movie lists. The app shows real-time showtimes from Finnish Finnkino theaters.
+
+The application uses TMBD API for movie information and Finnkino API for theater showtimes. This was a school project where we built a full-stack web application with a database, authentication and React frontend.
 
 
 ---
 
 ## Project goals
 
- :star: The purpose of this project was
+ :star: The purpose of this project was to create a social movie platform that helps users find movies, write reviews and share their favourite movies.
 
- :star: The aim was to
-
- :star: 
+ :star: The aim was to develop practical skills in full-stack web development, including database design, API integration, user authentication and responsive frontend design.
 
 ---
 
@@ -100,7 +113,14 @@ npm run dev
 
 ### End user
 
-*Deployment instructions coming soon*
+**How to use:**
+1. Register with email and create a username
+2. Browse movies from TMDB database
+3. Check showtimes from Finnkino theaters
+4. Add movies to your favourite list
+5. Write movie reviews
+6. Create or join groups
+7. Share your favourite movie lists
 
 ## Documentation
 
@@ -158,7 +178,25 @@ For this project we created PostgreSQL database with pgAdmin 4.
 
 ### Project outcome
 
-???
+This project succesfully demonstrates a full-stack web application. We built an app where users can browse movies, share reviews and organize groups.
+
+**What we learned:**
+- PostgreSQL database design
+- API integration
+- User authentication with JWT
+- React frontend development
+- Node.js backend
+- Teamwork on a larger project
+
+**Main features:**
+- User registration and login
+- Movie browsing with TMDB search
+- Finnkino showtimes browsing
+- Favourite list creation and management
+- Movie reviews with ratings
+- Group features
+- Public and private list sharing
+  
 
 ---
 
