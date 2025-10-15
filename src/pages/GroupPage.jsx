@@ -75,12 +75,12 @@ export default function GroupPage() {
   const fetchGroupMovies = async () => {
     try {
       const user = JSON.parse(sessionStorage.getItem('user'))
-      const res = await fetch(`http://localhost:3001/groups/${id}/movies`)
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/groups/${id}/movies`)
       const data = await res.json()
       setGroupMovies(data)
 
       // Fetch user's member groups
-      const resGroups = await fetch(`http://localhost:3001/groups/user/${user.userid}`)
+      const resGroups = await fetch(`${import.meta.env.VITE_API_URL}/groups/user/${user.userid}`)
       const memberGroups = await resGroups.json()
       setUserGroups(memberGroups)
     } catch (err) {
@@ -139,7 +139,7 @@ export default function GroupPage() {
 
     const exampleMovieID = 11
     try {
-      await fetch(`http://localhost:3001/groups/${id}/movies`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/groups/${id}/movies`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -233,7 +233,7 @@ const currentUserID = String(currentUser?.userid ?? currentUser?.userID ?? curre
     try {
       setLoading(true)
       setError(null)
-      const res = await fetch(`http://localhost:3001/groups/${groupID}/members`)
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/groups/${groupID}/members`)
       if (!res.ok) throw new Error(`Failed to fetch members: ${res.status}`)
       const data = await res.json()
       setOwnerID(data.ownerID)
@@ -253,7 +253,7 @@ const currentUserID = String(currentUser?.userid ?? currentUser?.userID ?? curre
   const handleRemove = async (userID) => {
     if (!window.confirm('Remove this member from the group?')) return
     try {
-      const res = await fetch(`http://localhost:3001/groups/remove`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/groups/remove`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ groupid: groupID, userid: userID, ownerid: currentUserID })
@@ -272,7 +272,7 @@ const currentUserID = String(currentUser?.userid ?? currentUser?.userID ?? curre
   const handleLeave = async () => {
     if (!window.confirm('Leave this group?')) return
     try {
-      const res = await fetch(`http://localhost:3001/groups/leave`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/groups/leave`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ groupid: groupID, userid: currentUserID })
