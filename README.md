@@ -5,9 +5,7 @@
 
 ## Table of contents
 
-- [Web application - USceneThis?](#web-application---uscenethis)
-      - [*Group 17 (TVT24KMO)*](#group-17-tvt24kmo)
-  - [Table of contents](#table-of-contents)
+
   - [Project introduction](#project-introduction)
   - [Project goals](#project-goals)
   - [Usage instructions](#usage-instructions)
@@ -21,9 +19,8 @@
     - [Deployment](#deployment)
     - [Database](#database-1)
     - [Frontend](#frontend-1)
-  - [](#)
-    - [Project outcome](#project-outcome)
-    - [Contributors](#contributors)
+- [Project outcome](#project-outcome)
+- [Contributors](#contributors)
 
 ---
 
@@ -72,7 +69,7 @@ Copy the file `server/.template.env` to `server/.env`and `/.template.env` to `/.
 
 **If you want to start the backend in test mode, run these commands in root folder:**
 
-==NOTE: You will need test database for this==
+<mark>NOTE: You will need test database for this</mark>
 
 ```sh
 cd server
@@ -97,7 +94,7 @@ npm run test
 
 All 10 tests should pass if everything is set up correctly.
 
-==NOTE: These tests initialize the database and all data stored in the database will be lost.==
+<mark>NOTE: These tests initialize the database and all data stored in the database will be lost.</mark>
 
 #### Frontend
 
@@ -124,11 +121,27 @@ npm run dev
 
 ## Documentation
 
-### Deployment
+### Backend
 
-???
+The backend of this project is built with **Node.js** and **Express**.  
+It provides REST API endpoints for user authentication, user management, movie management, showtimes, reviews, favourites, and group features.  
+The backend connects to a **PostgreSQL** database and integrates with **TMDB** and **Finnkino** APIs through the frontend.
 
----
+**Main technologies and libraries:**
+- **Express 5** – lightweight web framework for building REST APIs  
+- **pg** – PostgreSQL client for Node.js  
+- **dotenv** – manages environment variables (e.g., database URLs, API keys, JWT secrets)  
+- **bcrypt** – password hashing for secure user authentication  
+- **jsonwebtoken (JWT)** – authentication tokens for protected routes  
+- **cors** – enables secure cross-origin requests from the frontend  
+- **nodemon** – automatically restarts the server during development  
+
+**Testing and development tools:**
+- **Mocha** – test framework  
+- **Chai** – assertion library  
+- **Sinon** – mocking and stubbing utilities for testing  
+- **cross-env** – for setting environment variables across operating systems
+
 ### Database
 
 For this project we created PostgreSQL database with pgAdmin 4.
@@ -169,14 +182,42 @@ For this project we created PostgreSQL database with pgAdmin 4.
 ---
 ### Frontend
 
-**Logo:** ??
+The frontend of this project is built with **React** and **Vite**.
+It serves as the user interface for browsing, reviewing and sharing movies.
+
+**Logo:**
+
+<img src="./src/assets/images/uscenethis.png">
+
+**Key features**
+
+- Search and browse movies using the TMDB API  
+- View local showtimes from the Finnkino API  
+- Create and manage user accounts  
+- Add and share a list of favourite movies
+- Browse and add reviews of movies
+- Join or create movie groups
+
+**Main technologies and libraries:**
+- **React 18** – component-based UI framework  
+- **React Router DOM** – client-side navigation  
+- **Axios** – HTTP client for API communication with the backend  
+- **Bootstrap 5** – responsive layout and styling  
+- **React Toastify** – user notifications (e.g., success and error messages)  
+- **React Paginate** – pagination for movie lists  
+- **UUID** – unique identifiers for frontend-generated items  
+
+**Other utilities:**
+- **dotenv** – environment variable management  
+- **jsonwebtoken & bcrypt** – used mainly by backend but also required for authentication logic compatibility
 
 **Site map:**
 
 <img src="./documents/sitemap.png">
+
 ---
 
-### Project outcome
+## Project outcome
 
 This project succesfully demonstrates a full-stack web application. We built an app where users can browse movies, share reviews and organize groups.
 
@@ -197,9 +238,8 @@ This project succesfully demonstrates a full-stack web application. We built an 
 - Group features
 - Public and private list sharing
   
-
 ---
 
-### Contributors
+## Contributors
 
 This project was constructed by four students: Miro Lampela, Samu Hintsala, Janina Niemelä and Satu Palviainen. 
