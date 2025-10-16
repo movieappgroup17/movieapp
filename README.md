@@ -124,7 +124,7 @@ npm run dev
 ### Backend
 
 The backend of this project is built with **Node.js** and **Express**.  
-It provides REST API endpoints for user authentication, user management, movie management, showtimes, reviews, favourites, and group features.  
+It provides REST API endpoints for user authentication, user management, movie management, showtimes, reviews, favourites, and group features. Here you can see the documentation for the API calls: [Documentation](https://documenter.getpostman.com/view/48266555/2sB3QMNA3S).   
 The backend connects to a **PostgreSQL** database and integrates with **TMDB** and **Finnkino** APIs through the frontend.
 
 **Main technologies and libraries:**
