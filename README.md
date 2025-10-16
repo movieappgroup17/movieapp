@@ -184,6 +184,7 @@ For this project we created PostgreSQL database with pgAdmin 4.
 
 The frontend of this project is built with **React** and **Vite**.
 It serves as the user interface for browsing, reviewing and sharing movies.
+The app is public through Render, and can be visited at [USceneThis?](https://uscenethis-frontend.onrender.com/)
 
 **Logo:**
 
