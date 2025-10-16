@@ -215,6 +215,10 @@ It serves as the user interface for browsing, reviewing and sharing movies.
 
 <img src="./documents/sitemap.png">
 
+Here you can also see our wireframe for our initial UI plan for the website:
+
+[Document folder with UI pictures](./documents)
+
 ---
 
 ## Project outcome
